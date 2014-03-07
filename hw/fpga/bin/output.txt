@@ -1,0 +1,8 @@
+Storage Target: SPI Flash Single FPGA
+64M
+FF
+Untitled
+/home/brghena/workspace/amber/trunk/hw/fpga/flash
+
+MCS
+No

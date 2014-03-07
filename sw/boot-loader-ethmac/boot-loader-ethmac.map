@@ -1,0 +1,342 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+elf_mem0_g          0x4               elfsplitter.o
+reboot_stage_g      0x4               tftp.o
+reboot_timer_g      0x4               tftp.o
+rx_packet_g         0x4               packet.o
+current_time_g      0x4               timer.o
+led_flash_timer_g   0x4               led.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x01000000                . = 0x1000000
+
+.start          0x01000000      0x37c
+ start*(.text)
+ .text          0x01000000      0x37c start.o
+                0x01000000                start
+                0x01000020                _restart
+                0x010000b0                _jump_to_program
+                0x01000124                _testfail
+                0x01000130                _testpass
+                0x01000140                __aeabi_idiv
+                0x01000140                _div
+                0x010001c4                strcpy
+                0x01000210                strncpy
+                0x01000234                strncmp
+                0x01000274                init_malloc
+                0x01000290                malloc
+                0x010002c8                serial_putchar_
+
+.text           0x0100037c     0x30cc
+ *(.text)
+ .text          0x0100037c        0x0 boot-loader-ethmac.o
+ .text          0x0100037c      0x178 line-buffer.o
+                0x0100037c                init_line_buffer
+                0x010003b4                put_byte
+                0x01000400                put_line
+                0x01000470                get_line
+ .text          0x010004f4      0x190 timer.o
+                0x010004f4                new_timer
+                0x01000510                init_timer
+                0x0100054c                set_timer
+                0x010005bc                timer_interrupt
+                0x01000620                timer_expired
+ .text          0x01000684      0x430 print.o
+                0x01000684                prints
+                0x01000790                printi
+                0x010008e8                print
+ .text          0x01000ab4      0x1c0 elfsplitter.o
+                0x01000ab4                elfsplitter
+ .text          0x01000c74      0x14c utilities.o
+                0x01000c74                next_string
+                0x01000c90                strcmp
+                0x01000ce4                get_hex
+                0x01000d80                udelay20
+                0x01000db4                phy_rst
+ .text          0x01000dc0       0xd0 led.o
+                0x01000dc0                init_led
+                0x01000dec                led_clear
+                0x01000dfc                led_flip
+                0x01000e14                process_led
+                0x01000e48                led_on
+                0x01000e60                led_off
+                0x01000e78                led_123
+ .text          0x01000e90       0x34 serial.o
+                0x01000e90                init_serial
+                0x01000ea0                print_serial
+ .text          0x01000ec4      0x3cc ethmac.o
+                0x01000ec4                close_link
+                0x01000eec                ethmac_tx_packet
+                0x01000f40                mdio_ready
+                0x01000f6c                mdio_ctrl
+                0x01000fc8                mdio_read
+                0x01000fe0                mdio_write
+                0x01000ff8                init_phy
+                0x01001110                open_link
+                0x010011ec                init_ethmac
+                0x01001204                ethmac_interrupt
+ .text          0x01001290      0x5d0 packet.o
+                0x01001290                init_packet
+                0x010012b4                ethernet_header
+                0x01001320                arp_reply
+                0x01001438                parse_arp_packet
+                0x010014d0                header_checksum16
+                0x0100153c                ip_header
+                0x010015cc                ping_reply
+                0x010016a4                parse_ping_packet
+                0x010016d0                parse_ip_packet
+                0x010017cc                parse_rx_packet
+ .text          0x01001860      0xb20 tcp.o
+                0x01001860                new_socket
+                0x01001934                listen_socket
+                0x01001990                parse_tcp_options
+                0x01001a44                tcp_ack
+                0x01001abc                tcp_retransmit
+                0x01001b5c                tcp_checksum
+                0x01001bd4                tcp_header
+                0x01001dd4                tcp_open
+                0x01001ed8                tcp_reply
+                0x01001ff8                tcp_response
+                0x010020e0                tcp_disconnect
+                0x01002120                tcp_tx
+                0x0100213c                parse_tcp_packet
+                0x010022c8                process_tcp
+                0x01002358                process_sockets
+ .text          0x01002380      0x1f8 udp.o
+                0x01002380                parse_udp_packet
+                0x01002454                udp_reply
+ .text          0x01002578      0x414 tftp.o
+                0x01002578                init_buffer_512
+                0x010025c0                parse_tftp_packet
+                0x01002784                init_tftp
+                0x010027ac                process_file
+                0x01002808                reboot
+                0x0100288c                process_tftp
+ .text          0x0100298c      0x5c8 telnet.o
+                0x0100298c                new_telnet
+                0x01002a14                listen_telnet
+                0x01002a64                telnet_disconnect
+                0x01002a80                parse_telnet_payload
+                0x01002b40                parse_telnet_options
+                0x01002c08                telnet_options
+                0x01002c38                telnet_tx
+                0x01002cac                parse_command
+                0x01002ed0                process_telnet
+ .text          0x01002f54      0x4f4 ../mini-libc/memcpy.o
+                0x01002f54                memcpy
+
+.glue_7         0x01003448        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x01003448        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x01003448        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x01003448        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.text.startup   0x01003448       0x3c
+ .text.startup  0x01003448       0x3c boot-loader-ethmac.o
+                0x01003448                main
+
+.iplt           0x01003484        0x0
+ .iplt          0x00000000        0x0 boot-loader-ethmac.o
+
+.rodata
+ *(.rodata)
+
+.rodata.str1.1  0x01003484      0x2b9
+ .rodata.str1.1
+                0x01003484       0x13 boot-loader-ethmac.o
+ .rodata.str1.1
+                0x01003497        0x7 print.o
+ .rodata.str1.1
+                0x0100349e       0x9a elfsplitter.o
+ .rodata.str1.1
+                0x01003538       0x2e packet.o
+ .rodata.str1.1
+                0x01003566        0xe udp.o
+ .rodata.str1.1
+                0x01003574       0x73 tftp.o
+                                 0x76 (size before relaxing)
+ .rodata.str1.1
+                0x010035e7      0x156 telnet.o
+                                0x159 (size before relaxing)
+
+.rel.dyn        0x01003740        0x0
+ .rel.iplt      0x00000000        0x0 boot-loader-ethmac.o
+
+.data           0x0100373d        0xa
+ *(.data)
+ .data          0x0100373d        0x0 boot-loader-ethmac.o
+ .data          0x0100373d        0x0 line-buffer.o
+ .data          0x0100373d        0x0 timer.o
+ .data          0x0100373d        0x0 print.o
+ .data          0x0100373d        0x0 elfsplitter.o
+ .data          0x0100373d        0x0 utilities.o
+ .data          0x0100373d        0x0 led.o
+ .data          0x0100373d        0x0 serial.o
+ .data          0x0100373d        0x0 ethmac.o
+ .data          0x0100373d        0xa packet.o
+                0x0100373d                self_g
+ .data          0x01003747        0x0 tcp.o
+ .data          0x01003747        0x0 udp.o
+ .data          0x01003747        0x0 tftp.o
+ .data          0x01003747        0x0 telnet.o
+ .data          0x01003747        0x0 start.o
+ .data          0x01003747        0x0 ../mini-libc/memcpy.o
+
+.igot.plt       0x01003748        0x0
+ .igot.plt      0x00000000        0x0 boot-loader-ethmac.o
+
+.bss            0x01003748       0x30
+ *(.bss)
+ .bss           0x01003748        0x0 boot-loader-ethmac.o
+ .bss           0x01003748        0x0 line-buffer.o
+ .bss           0x01003748        0x0 timer.o
+ .bss           0x01003748        0x0 print.o
+ .bss           0x01003748        0x0 elfsplitter.o
+ .bss           0x01003748        0x0 utilities.o
+ .bss           0x01003748        0x0 led.o
+ .bss           0x01003748        0x0 serial.o
+ .bss           0x01003748        0x0 ethmac.o
+ .bss           0x01003748        0x0 packet.o
+ .bss           0x01003748        0x8 tcp.o
+                0x01003748                first_socket_g
+                0x0100374c                tcp_checksum_errors_g
+ .bss           0x01003750        0x4 udp.o
+                0x01003750                udp_checksum_errors_g
+ .bss           0x01003754        0x8 tftp.o
+                0x01003754                udp_file_g
+                0x01003758                udp_current_block_g
+ .bss           0x0100375c        0x4 telnet.o
+                0x0100375c                first_telnet_g
+ .bss           0x01003760        0x0 start.o
+ .bss           0x01003760        0x0 ../mini-libc/memcpy.o
+ COMMON         0x01003760        0x4 timer.o
+                0x01003760                current_time_g
+ COMMON         0x01003764        0x4 elfsplitter.o
+                0x01003764                elf_mem0_g
+ COMMON         0x01003768        0x4 led.o
+                0x01003768                led_flash_timer_g
+ COMMON         0x0100376c        0x4 packet.o
+                0x0100376c                rx_packet_g
+ COMMON         0x01003770        0x8 tftp.o
+                0x01003770                reboot_stage_g
+                0x01003774                reboot_timer_g
+
+.stack          0x01003778        0x0
+                0x01003778                __stack = .
+LOAD boot-loader-ethmac.o
+LOAD line-buffer.o
+LOAD timer.o
+LOAD print.o
+LOAD elfsplitter.o
+LOAD utilities.o
+LOAD led.o
+LOAD serial.o
+LOAD ethmac.o
+LOAD packet.o
+LOAD tcp.o
+LOAD udp.o
+LOAD tftp.o
+LOAD telnet.o
+LOAD start.o
+LOAD ../mini-libc/memcpy.o
+OUTPUT(boot-loader-ethmac.elf elf32-littlearm)
+
+.comment        0x00000000       0x30
+ .comment       0x00000000       0x30 boot-loader-ethmac.o
+                                 0x31 (size before relaxing)
+ .comment       0x00000000       0x31 line-buffer.o
+ .comment       0x00000000       0x31 timer.o
+ .comment       0x00000000       0x31 print.o
+ .comment       0x00000000       0x31 elfsplitter.o
+ .comment       0x00000000       0x31 utilities.o
+ .comment       0x00000000       0x31 led.o
+ .comment       0x00000000       0x31 serial.o
+ .comment       0x00000000       0x31 ethmac.o
+ .comment       0x00000000       0x31 packet.o
+ .comment       0x00000000       0x31 tcp.o
+ .comment       0x00000000       0x31 udp.o
+ .comment       0x00000000       0x31 tftp.o
+ .comment       0x00000000       0x31 telnet.o
+ .comment       0x00000000       0x31 ../mini-libc/memcpy.o
+
+.note.GNU-stack
+                0x00000000        0x0
+ .note.GNU-stack
+                0x00000000        0x0 boot-loader-ethmac.o
+ .note.GNU-stack
+                0x00000000        0x0 line-buffer.o
+ .note.GNU-stack
+                0x00000000        0x0 timer.o
+ .note.GNU-stack
+                0x00000000        0x0 print.o
+ .note.GNU-stack
+                0x00000000        0x0 elfsplitter.o
+ .note.GNU-stack
+                0x00000000        0x0 utilities.o
+ .note.GNU-stack
+                0x00000000        0x0 led.o
+ .note.GNU-stack
+                0x00000000        0x0 serial.o
+ .note.GNU-stack
+                0x00000000        0x0 ethmac.o
+ .note.GNU-stack
+                0x00000000        0x0 packet.o
+ .note.GNU-stack
+                0x00000000        0x0 tcp.o
+ .note.GNU-stack
+                0x00000000        0x0 udp.o
+ .note.GNU-stack
+                0x00000000        0x0 tftp.o
+ .note.GNU-stack
+                0x00000000        0x0 telnet.o
+ .note.GNU-stack
+                0x00000000        0x0 ../mini-libc/memcpy.o
+
+.ARM.attributes
+                0x00000000       0x29
+ .ARM.attributes
+                0x00000000       0x28 boot-loader-ethmac.o
+ .ARM.attributes
+                0x00000028       0x28 line-buffer.o
+ .ARM.attributes
+                0x00000050       0x28 timer.o
+ .ARM.attributes
+                0x00000078       0x28 print.o
+ .ARM.attributes
+                0x000000a0       0x28 elfsplitter.o
+ .ARM.attributes
+                0x000000c8       0x28 utilities.o
+ .ARM.attributes
+                0x000000f0       0x28 led.o
+ .ARM.attributes
+                0x00000118       0x28 serial.o
+ .ARM.attributes
+                0x00000140       0x28 ethmac.o
+ .ARM.attributes
+                0x00000168       0x28 packet.o
+ .ARM.attributes
+                0x00000190       0x28 tcp.o
+ .ARM.attributes
+                0x000001b8       0x28 udp.o
+ .ARM.attributes
+                0x000001e0       0x28 tftp.o
+ .ARM.attributes
+                0x00000208       0x28 telnet.o
+ .ARM.attributes
+                0x00000230       0x1b start.o
+ .ARM.attributes
+                0x0000024b       0x28 ../mini-libc/memcpy.o

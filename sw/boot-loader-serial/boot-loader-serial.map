@@ -1,0 +1,177 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+SHT_NAME            0x50              elfsplitter.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x00000000                . = 0x0
+
+.start          0x00000000      0x180
+ start*(.text)
+ .text          0x00000000      0x180 start.o
+                0x00000000                start
+                0x0000004c                _jump_to_program
+                0x00000094                _core_status
+
+.text           0x00000180     0x1800
+ *(.text)
+ .text          0x00000180      0x5f0 boot-loader-serial.o
+                0x00000180                printm
+                0x00000194                print_spaces
+                0x000001bc                print_help
+                0x000002dc                load_run
+                0x00000418                get_hex
+                0x000004e0                get_address_data
+                0x00000528                parse
+ .text          0x00000770       0x50 crc16.o
+                0x00000770                crc16_ccitt
+ .text          0x000007c0      0x2ac xmodem.o
+                0x000007d8                xmodemReceive
+ .text          0x00000a6c      0x13c elfsplitter.o
+                0x00000a6c                elfsplitter
+ .text          0x00000ba8      0x464 ../mini-libc/printf.o
+                0x00000ba8                outbyte
+                0x00000bd0                prints
+                0x00000ca8                printi
+                0x00000de8                print
+                0x00000fac                sprintf
+                0x00000fdc                printf
+ .text          0x0000100c      0x480 ../mini-libc/libc_asm.o
+                0x0000100c                _testfail
+                0x00001018                _testpass
+                0x00001028                _outbyte
+                0x00001048                _inbyte
+                0x00001078                __aeabi_idiv
+                0x00001078                _div
+                0x000010fc                strcpy
+                0x00001200                strcmp
+                0x000013f8                init_malloc
+                0x00001404                malloc
+                0x00001418                strncpy
+                0x0000143c                strncmp
+ .text          0x0000148c      0x4f4 ../mini-libc/memcpy.o
+                0x0000148c                memcpy
+
+.glue_7         0x00001980        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x00001980        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x00001980        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00001980        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.text.startup   0x00001980      0x1a4
+ .text.startup  0x00001980      0x1a4 boot-loader-serial.o
+                0x00001980                main
+
+.iplt           0x00001b24        0x0
+ .iplt          0x00000000        0x0 boot-loader-serial.o
+
+.rodata         0x00001b24      0x200
+ *(.rodata)
+ .rodata        0x00001b24      0x200 crc16.o
+
+.rodata.str1.1  0x00001d24      0x25e
+ .rodata.str1.1
+                0x00001d24      0x203 boot-loader-serial.o
+                                0x20e (size before relaxing)
+ .rodata.str1.1
+                0x00001f27       0x54 elfsplitter.o
+ .rodata.str1.1
+                0x00001f7b        0x7 ../mini-libc/printf.o
+
+.rel.dyn        0x00001f84        0x0
+ .rel.iplt      0x00000000        0x0 boot-loader-serial.o
+
+.data           0x00001f82        0x0
+ *(.data)
+ .data          0x00001f82        0x0 boot-loader-serial.o
+ .data          0x00001f82        0x0 start.o
+ .data          0x00001f82        0x0 crc16.o
+ .data          0x00001f82        0x0 xmodem.o
+ .data          0x00001f82        0x0 elfsplitter.o
+ .data          0x00001f82        0x0 ../mini-libc/printf.o
+ .data          0x00001f82        0x0 ../mini-libc/libc_asm.o
+ .data          0x00001f82        0x0 ../mini-libc/memcpy.o
+
+.igot.plt       0x00001f84        0x0
+ .igot.plt      0x00000000        0x0 boot-loader-serial.o
+
+.bss            0x00001f82       0x50
+ *(.bss)
+ .bss           0x00001f82        0x0 boot-loader-serial.o
+ .bss           0x00001f82        0x0 start.o
+ .bss           0x00001f82        0x0 crc16.o
+ .bss           0x00001f82        0x0 xmodem.o
+ .bss           0x00001f82        0x0 elfsplitter.o
+ .bss           0x00001f82        0x0 ../mini-libc/printf.o
+ .bss           0x00001f82        0x0 ../mini-libc/libc_asm.o
+ .bss           0x00001f82        0x0 ../mini-libc/memcpy.o
+ COMMON         0x00001f82       0x50 elfsplitter.o
+                0x00001f82                SHT_NAME
+
+.stack          0x00001fd2        0x0
+                0x00001fd2                __stack = .
+LOAD boot-loader-serial.o
+LOAD start.o
+LOAD crc16.o
+LOAD xmodem.o
+LOAD elfsplitter.o
+LOAD ../mini-libc/printf.o
+LOAD ../mini-libc/libc_asm.o
+LOAD ../mini-libc/memcpy.o
+OUTPUT(boot-loader-serial.elf elf32-littlearm)
+
+.comment        0x00000000       0x30
+ .comment       0x00000000       0x30 boot-loader-serial.o
+                                 0x31 (size before relaxing)
+ .comment       0x00000000       0x31 crc16.o
+ .comment       0x00000000       0x31 xmodem.o
+ .comment       0x00000000       0x31 elfsplitter.o
+ .comment       0x00000000       0x31 ../mini-libc/printf.o
+ .comment       0x00000000       0x31 ../mini-libc/memcpy.o
+
+.note.GNU-stack
+                0x00000000        0x0
+ .note.GNU-stack
+                0x00000000        0x0 boot-loader-serial.o
+ .note.GNU-stack
+                0x00000000        0x0 crc16.o
+ .note.GNU-stack
+                0x00000000        0x0 xmodem.o
+ .note.GNU-stack
+                0x00000000        0x0 elfsplitter.o
+ .note.GNU-stack
+                0x00000000        0x0 ../mini-libc/printf.o
+ .note.GNU-stack
+                0x00000000        0x0 ../mini-libc/memcpy.o
+
+.ARM.attributes
+                0x00000000       0x29
+ .ARM.attributes
+                0x00000000       0x28 boot-loader-serial.o
+ .ARM.attributes
+                0x00000028       0x1b start.o
+ .ARM.attributes
+                0x00000043       0x28 crc16.o
+ .ARM.attributes
+                0x0000006b       0x28 xmodem.o
+ .ARM.attributes
+                0x00000093       0x28 elfsplitter.o
+ .ARM.attributes
+                0x000000bb       0x28 ../mini-libc/printf.o
+ .ARM.attributes
+                0x000000e3       0x1b ../mini-libc/libc_asm.o
+ .ARM.attributes
+                0x000000fe       0x28 ../mini-libc/memcpy.o

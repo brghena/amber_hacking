@@ -1,0 +1,82 @@
+Release 14.5 ngdbuild P.58f (lin)
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+Command Line: /opt/Xilinx/14.5/ISE_DS/ISE/bin/lin/unwrapped/ngdbuild -intstyle
+xflow -verbose -p xc6slx45tfgg484-3 -dd _ngo -nt on -uc
+../bin/xs6_constraints.ucf system.ngc system.ngd
+
+Reading NGO file "/home/brghena/workspace/amber/trunk/hw/fpga/work0/system.ngc"
+...
+Gathering constraint information from source properties...
+Done.
+
+Annotating constraints to design from ucf file "../bin/xs6_constraints.ucf" ...
+WARNING:NgdBuild - The value of SIM_DEVICE on instance
+   'u_clocks_resets/u_pll_adv' of type PLL_ADV has been changed from 'VIRTEX5'
+   to 'SPARTAN6' to correct post-ngdbuild and timing simulation for this
+   primitive.  In order for functional simulation to be correct, the value of
+   SIM_DEVICE should be changed in this same manner in the source netlist or
+   constraint file.
+Resolving constraint associations...
+Checking Constraint Associations...
+INFO:ConstraintSystem:178 - TNM 'BRD_CLK', used in period specification
+   'TS_PLL_CLK', was traced into PLL_ADV instance u_clocks_resets/u_pll_adv. The
+   following new TNM groups and period specifications were generated at the
+   PLL_ADV output(s): 
+   CLKOUT2: <TIMESPEC TS_u_clocks_resets_pll_clk = PERIOD
+   "u_clocks_resets_pll_clk" TS_PLL_CLK / 0.222222222 HIGH 50%>
+
+INFO:ConstraintSystem:178 - TNM 'BRD_CLK', used in period specification
+   'TS_PLL_CLK', was traced into PLL_ADV instance
+   u_ddr3/memc3_infrastructure_inst/u_pll_adv. The following new TNM groups and
+   period specifications were generated at the PLL_ADV output(s): 
+   CLKOUT3: <TIMESPEC TS_u_ddr3_memc3_infrastructure_inst_mcb_drp_clk_bufg_in =
+   PERIOD "u_ddr3_memc3_infrastructure_inst_mcb_drp_clk_bufg_in" TS_PLL_CLK /
+   0.5 HIGH 50%>
+
+INFO:ConstraintSystem:178 - TNM 'BRD_CLK', used in period specification
+   'TS_PLL_CLK', was traced into PLL_ADV instance
+   u_ddr3/memc3_infrastructure_inst/u_pll_adv. The following new TNM groups and
+   period specifications were generated at the PLL_ADV output(s): 
+   CLKOUT1: <TIMESPEC TS_u_ddr3_memc3_infrastructure_inst_clk_2x_180 = PERIOD
+   "u_ddr3_memc3_infrastructure_inst_clk_2x_180" TS_PLL_CLK / 4 PHASE 0.625 ns
+   HIGH 50%>
+
+INFO:ConstraintSystem:178 - TNM 'BRD_CLK', used in period specification
+   'TS_PLL_CLK', was traced into PLL_ADV instance
+   u_ddr3/memc3_infrastructure_inst/u_pll_adv. The following new TNM groups and
+   period specifications were generated at the PLL_ADV output(s): 
+   CLKOUT0: <TIMESPEC TS_u_ddr3_memc3_infrastructure_inst_clk_2x_0 = PERIOD
+   "u_ddr3_memc3_infrastructure_inst_clk_2x_0" TS_PLL_CLK / 4 HIGH 50%>
+
+INFO:ConstraintSystem:178 - TNM 'BRD_CLK', used in period specification
+   'TS_PLL_CLK', was traced into PLL_ADV instance
+   u_ddr3/memc3_infrastructure_inst/u_pll_adv. The following new TNM groups and
+   period specifications were generated at the PLL_ADV output(s): 
+   CLKOUT2: <TIMESPEC TS_u_ddr3_memc3_infrastructure_inst_clk0_bufg_in = PERIOD
+   "u_ddr3_memc3_infrastructure_inst_clk0_bufg_in" TS_PLL_CLK / 0.25 HIGH 50%>
+
+Done...
+
+Checking expanded design ...
+WARNING:NgdBuild:452 - logical net 'N1469' has no driver
+WARNING:NgdBuild:452 - logical net 'N1470' has no driver
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+NGDBUILD Design Results Summary:
+  Number of errors:     0
+  Number of warnings:   3
+
+Total memory usage is 136860 kilobytes
+
+Writing NGD file "system.ngd" ...
+Total REAL time to NGDBUILD completion:  6 sec
+Total CPU time to NGDBUILD completion:   6 sec
+
+Writing NGDBUILD log file "system.bld"...

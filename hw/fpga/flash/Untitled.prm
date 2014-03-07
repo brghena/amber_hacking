@@ -1,0 +1,17 @@
+PROMGEN: Xilinx Prom Generator P.58f
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+promgen -w -p mcs -c FF -o /home/brghena/workspace/amber/trunk/hw/fpga/flash//Untitled -s 8192 -u 0000 /home/brghena/workspace/amber/trunk/hw/fpga/bitfiles/system.a23.20140307125847_cclktemp.bit -spi 
+
+PROM /home/brghena/workspace/amber/trunk/hw/fpga/flash/Untitled.prm map: Fri Mar  7 13:10:43 2014
+
+Calculating PROM checksum with fill value ff
+
+Format        Mcs86 (32-bit)
+Size          8192K
+PROM start    0000:0000
+PROM end      007f:ffff
+PROM checksum 69e9dcc4
+
+        Addr1        Addr2                     Date File(s)
+    0000:0000    0016:abdb     Mar  7 13:10:35 2014 /home/brghena/workspace/amber/trunk/hw/fpga/bitfiles/system.a23.20140307125847_cclktemp.bit

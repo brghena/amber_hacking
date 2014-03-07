@@ -1,0 +1,251 @@
+iMPACT Version: 14.5
+
+iMPACT log file Started on Fri Mar  7 12:24:16 2014
+
+Welcome to iMPACT
+iMPACT Version: 14.5
+// *** BATCH CMD : setMode -bs
+GUI --- Auto connect to cable...
+// *** BATCH CMD : setCable -port auto
+INFO:iMPACT - Connecting to TCF agent...
+INFO:iMPACT - Digilent Plugin: Plugin Version: 2.4.4
+INFO:iMPACT - Digilent Plugin: no JTAG device was found.
+AutoDetecting cable. Please wait.
+*** WARNING ***: When port is set to auto detect mode, cable speed is set todefault 6 MHz regardless of explicit arguments supplied for setting the baudrates
+PROGRESS_START - Starting Operation.
+ OS platform = i686.
+ Using windrvr6 driver.
+Connecting to cable (Usb Port - USB21).
+Checking cable driver.
+File version of /opt/Xilinx/14.5/ISE_DS/ISE/bin/lin/xusbdfwu.hex = 1030.
+File version of /usr/share/xusbdfwu.hex = 1030.
+ libusb-driver.so version: 2011-12-12 10:47:45.
+Cable connection failed.
+ OS platform = i686.
+Connecting to cable (Parallel Port - parport0).
+ libusb-driver.so version: 2011-12-12 10:47:45.
+ parport0: 
+ parport1: 
+ parport2: 
+ parport3: 
+ LPT1 Base Address set from env variable = 0.
+ LPT base address = 0000h.
+ LPT1 Ecp Address set from env variable = 400.
+ ECP base address = 0400h.
+Cable connection failed.
+ OS platform = i686.
+Connecting to cable (Parallel Port - parport1).
+ libusb-driver.so version: 2011-12-12 10:47:45.
+ LPT2 Base Address set from env variable = 10.
+ LPT base address = 0010h.
+ LPT2 Ecp Address set from env variable = 410.
+ ECP base address = 0410h.
+LPT port is already in use. rc = FFFFFFFFh
+Cable connection failed.
+ OS platform = i686.
+Connecting to cable (Parallel Port - parport2).
+ libusb-driver.so version: 2011-12-12 10:47:45.
+ LPT3 Base Address set from env variable = 20.
+ LPT base address = 0020h.
+ LPT3 Ecp Address set from env variable = 420.
+ ECP base address = 0420h.
+LPT port is already in use. rc = FFFFFFFFh
+Cable connection failed.
+ OS platform = i686.
+Connecting to cable (Parallel Port - parport3).
+ libusb-driver.so version: 2011-12-12 10:47:45.
+ LPT4 Base Address set from env variable = 30.
+ LPT base address = 0030h.
+ LPT4 Ecp Address set from env variable = 430.
+ ECP base address = 0430h.
+LPT port is already in use. rc = FFFFFFFFh
+Cable connection failed.
+PROGRESS_END - End Operation.
+Elapsed time =      4 sec.
+Cable autodetection failed.
+WARNING:iMPACT:923 - Can not find cable, check cable setup !GUI --- Auto connect to cable...
+// *** BATCH CMD : setCable -port auto
+INFO:iMPACT - Connecting to TCF agent...
+INFO:iMPACT - Digilent Plugin: Plugin Version: 2.4.4
+INFO:iMPACT - Digilent Plugin: no JTAG device was found.
+AutoDetecting cable. Please wait.
+*** WARNING ***: When port is set to auto detect mode, cable speed is set todefault 6 MHz regardless of explicit arguments supplied for setting the baudrates
+PROGRESS_START - Starting Operation.
+ OS platform = i686.
+ Using windrvr6 driver.
+Connecting to cable (Usb Port - USB21).
+Checking cable driver.
+File version of /opt/Xilinx/14.5/ISE_DS/ISE/bin/lin/xusbdfwu.hex = 1030.
+File version of /usr/share/xusbdfwu.hex = 1030.
+ libusb-driver.so version: 2011-12-12 10:47:45.
+ Cable PID = 0008.
+ Max current requested during enumeration is 74 mA.
+Type = 0x0004.
+ Cable Type = 3, Revision = 0.
+ Setting cable speed to 6 MHz.
+Cable connection established.
+Firmware version = 1028.
+File version of /opt/Xilinx/14.5/ISE_DS/ISE/data/xusb_xlp.hex = 1303.
+Firmware hex file version = 1303.
+Downloading /opt/Xilinx/14.5/ISE_DS/ISE/data/xusb_xlp.hex.
+Downloaded firmware version = 1303.
+PLD file version = 0012h.
+ PLD version = 0012h.
+PROGRESS_END - End Operation.
+Elapsed time =      1 sec.
+Type = 0x0004.
+ESN option: 0000153705E601.
+Attempting to identify devices in the boundary-scan chain configuration...
+INFO:iMPACT - Current time: 3/7/14 12:26 PM
+// *** BATCH CMD : Identify -inferir 
+PROGRESS_START - Starting Operation.
+Identifying chain contents...'0': : Manufacturer's ID = Xilinx xc6slx45t, Version : 4
+INFO:iMPACT:1777 - 
+   Reading /opt/Xilinx/14.5/ISE_DS/ISE/spartan6/data/xc6slx45t.bsd...
+INFO:iMPACT:501 - '1': Added Device xc6slx45t successfully.
+----------------------------------------------------------------------
+'1': : Manufacturer's ID = Xilinx xccace, Version : 0
+INFO:iMPACT:1777 - 
+   Reading /opt/Xilinx/14.5/ISE_DS/ISE/acecf/data/xccace.bsd...
+INFO:iMPACT:501 - '1': Added Device xccace successfully.
+----------------------------------------------------------------------
+done.
+PROGRESS_END - End Operation.
+Elapsed time =      0 sec.
+// *** BATCH CMD : identifyMPM 
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : addConfigDevice  -name "Untitled" -path"/home/brghena/workspace/amber/trunk/hw/fpga/flash"
+// *** BATCH CMD : setSubmode -pffspi
+// *** BATCH CMD : setAttribute -configdevice -attr multibootBpiType -value ""
+// *** BATCH CMD : addDesign -version 0 -name "0"
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : addDeviceChain -index 0
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : addDeviceChain -index 0
+Override chain at index 0.
+Overriding chain at index 0.
+// *** BATCH CMD : setAttribute -configdevice -attr compressed -value "FALSE"
+// *** BATCH CMD : setAttribute -configdevice -attr autoSize -value "FALSE"
+// *** BATCH CMD : setAttribute -configdevice -attr fileFormat -value "mcs"
+// *** BATCH CMD : setAttribute -configdevice -attr fillValue -value "FF"
+// *** BATCH CMD : setAttribute -configdevice -attr swapBit -value "FALSE"
+// *** BATCH CMD : setAttribute -configdevice -attr dir -value "UP"
+// *** BATCH CMD : setAttribute -configdevice -attr multiboot -value "FALSE"
+// *** BATCH CMD : setAttribute -configdevice -attr spiSelected -value "TRUE"
+// *** BATCH CMD : addPromDevice -p 1 -size 8192 -name 8M
+'1': Added Device 8M successfully.
+----------------------------------------------------------------------
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : addDeviceChain -index 0
+Override chain at index 0.
+Overriding chain at index 0.
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : addDeviceChain -index 0
+Override chain at index 0.
+Overriding chain at index 0.
+// *** BATCH CMD : setSubmode -pffspi
+// *** BATCH CMD : setMode -pff
+------------------------  GUI: Wizard Data Report  ---------------------------
+      Compression : false
+      Fill Value : FF
+      Output Format : mcs
+      Swap Bits : false
+      LoadDirection : UP
+      PROM Basename : Untitled
+      File Location : /home/brghena/workspace/amber/trunk/hw/fpga/flash/
+      Auto Select : false
+      Number of Revisions : 1
+      Number of PROMs : 1
+      PROM Name : 8M   PROM Size : 8388608 bits
+-------------------------- END of Report ----------------------------
+// *** BATCH CMD : setAttribute -design -attr name -value "0000"
+// *** BATCH CMD : addDevice -p 1 -file"/home/brghena/workspace/amber/trunk/hw/fpga/bitfiles/system.a23.20140307125847.bit"
+'1': Loading file'/home/brghena/workspace/amber/trunk/hw/fpga/bitfiles/system.a23.20140307125847.bit' ...
+INFO:iMPACT - Elapsed time =      0 sec.
+done.
+INFO:iMPACT:2257 - Startup Clock has been changed to 'Cclk' in the bitstream   stored in memory,
+   but the original bitstream file remains unchanged.
+Dumping bit file/home/brghena/workspace/amber/trunk/hw/fpga/bitfiles/system.a23.20140307125847_cclktemp.bit...
+INFO:iMPACT:501 - '1': Added Device xc6slx45t successfully.
+----------------------------------------------------------------------
+Add one device.16ad06INFO:iMPACT - Current time: 3/7/14 1:10 PM
+// *** BATCH CMD : setMode -pff
+// *** BATCH CMD : setSubmode -pffspi
+Total configuration bit size = 11886304  bits.
+Total configuration byte size = 1485788 bytes.
+// *** BATCH CMD : generate
+######### is 81920x16abdc (1485788) bytes loaded up from 0x0
+Using user-specified prom size of 8192K
+Writing file "/home/brghena/workspace/amber/trunk/hw/fpga/flash/Untitled.mcs".
+Writing file "/home/brghena/workspace/amber/trunk/hw/fpga/flash/Untitled.prm".
+Writing file "/home/brghena/workspace/amber/trunk/hw/fpga/flash/Untitled.cfi".
+// *** BATCH CMD : setCurrentDesign -version 0
+// *** BATCH CMD : setMode -bs
+Attempting to identify devices in the boundary-scan chain configuration...
+INFO:iMPACT - Current time: 3/7/14 1:10 PM
+// *** BATCH CMD : Identify -inferir 
+PROGRESS_START - Starting Operation.
+----------------------------------------------------------------------
+Identifying chain contents...'0': : Manufacturer's ID = Xilinx xc6slx45t, Version : 4
+INFO:iMPACT:1777 - 
+   Reading /opt/Xilinx/14.5/ISE_DS/ISE/spartan6/data/xc6slx45t.bsd...
+INFO:iMPACT:501 - '1': Added Device xc6slx45t successfully.
+----------------------------------------------------------------------
+'1': : Manufacturer's ID = Xilinx xccace, Version : 0
+INFO:iMPACT:1777 - 
+   Reading /opt/Xilinx/14.5/ISE_DS/ISE/acecf/data/xccace.bsd...
+INFO:iMPACT:501 - '1': Added Device xccace successfully.
+----------------------------------------------------------------------
+done.
+PROGRESS_END - End Operation.
+Elapsed time =      1 sec.
+// *** BATCH CMD : identifyMPM 
+Selected part: W25Q64FV
+// *** BATCH CMD : attachflash -position 2 -spi "W25Q64FV"
+Unprotect sectors: FALSE
+// *** BATCH CMD : assignfiletoattachedflash -position 2 -file"/home/brghena/workspace/amber/trunk/hw/fpga/flash/Untitled.mcs"
+INFO:iMPACT - Current time: 3/7/14 1:12 PM
+// *** BATCH CMD : Program -p 2 -dataWidth 1 -spionly -e -v -loadfpga 
+PROGRESS_START - Starting Operation.
+Maximum TCK operating frequency for this device chain: 16700000.
+Validating chain...
+Boundary-scan chain validated successfully.
+'2': SPI access core not detected. SPI access core will be downloaded to thedevice to enable operations.
+INFO:iMPACT - Downloading core file   /opt/Xilinx/14.5/ISE_DS/ISE/spartan6/data/xc6slx45t_spi.cor.
+'2': Downloading core...
+ LCK_cycle = NoWait.
+LCK cycle: NoWait
+done.
+'2': Reading status register contents...
+INFO:iMPACT:2219 - Status register values:
+INFO:iMPACT - 0011 1100 1110 1100 
+INFO:iMPACT:2492 - '2': Completed downloading core to device.
+'2': IDCODE is 'ef4017' (in hex).
+'2': ID Check passed.
+'2': IDCODE is 'ef4017' (in hex).
+'2': ID Check passed.
+'2': Erasing Device.
+'2': Using Bulk Erase.
+'2': Erasing non-volatile quad-enable bit...
+'2': Programming Flash.
+'2': Reading device contents...
+done.
+'2': Verification completed.
+'2':Programming in x1 mode.
+W25Q64FV Status Register Contents = 0x0000.
+QUAD ENABLE                                       :         0
+STATUS REGISTER PROTECT 1                         :         0
+STATUS REGISTER PROTECT 0                         :         0
+SECTOR PROTECT                                    :         0
+TOP/BOTTOM PROTECT                                :         0
+BLOCK PROTECT BIT 2                               :         0
+BLOCK PROTECT BIT 1                               :         0
+BLOCK PROTECT BIT 0                               :         0
+'2': Programmed successfully.
+INFO:iMPACT - '2': Flash was programmed successfully.
+ LCK_cycle = NoWait.
+LCK cycle: NoWait
+INFO:iMPACT - '2': Checking done pin....done.
+'2': Programmed successfully.
+PROGRESS_END - End Operation.
+Elapsed time =    451 sec.

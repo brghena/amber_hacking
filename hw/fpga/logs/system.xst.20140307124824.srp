@@ -1,0 +1,124 @@
+Release 14.5 - xst P.58f (lin)
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+--> 
+Parameter TMPDIR set to ./systemxst/tmp
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.03 secs
+ 
+--> 
+Parameter xsthdpdir set to ./systemxst
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.03 secs
+ 
+--> 
+Reading design: ../bin/xs6_source_files.prj
+
+TABLE OF CONTENTS
+  1) Synthesis Options Summary
+  2) HDL Parsing
+  3) HDL Elaboration
+  4) HDL Synthesis
+       4.1) HDL Synthesis Report
+  5) Advanced HDL Synthesis
+       5.1) Advanced HDL Synthesis Report
+  6) Low Level Synthesis
+  7) Partition Report
+  8) Design Summary
+       8.1) Primitive and Black Box Usage
+       8.2) Device utilization summary
+       8.3) Partition Resource Summary
+       8.4) Timing Report
+            8.4.1) Clock Information
+            8.4.2) Asynchronous Control Signals Information
+            8.4.3) Timing Summary
+            8.4.4) Timing Details
+            8.4.5) Cross Clock Domains Report
+
+
+=========================================================================
+*                      Synthesis Options Summary                        *
+=========================================================================
+---- Source Parameters
+Input File Name                    : "../bin/xs6_source_files.prj"
+Verilog Include Directory          : {../../vlog/lib ../../vlog/tb ../../../sw/boot-loader-serial}
+Input Format                       : mixed
+Ignore Synthesis Constraint File   : NO
+
+---- Target Parameters
+Output File Name                   : "system"
+Output Format                      : NGC
+Target Device                      : xc6slx45tfgg484-3
+
+---- Source Options
+Top Module Name                    : system
+Automatic FSM Extraction           : YES
+FSM Encoding Algorithm             : Auto
+Safe Implementation                : No
+FSM Style                          : lut
+RAM Extraction                     : Yes
+RAM Style                          : Auto
+ROM Extraction                     : Yes
+Shift Register Extraction          : YES
+ROM Style                          : Auto
+Resource Sharing                   : YES
+Asynchronous To Synchronous        : NO
+Automatic Register Balancing       : No
+Verilog Macros                     : { XILINX_FPGA XILINX_SPARTAN6_FPGA AMBER_A23_CORE AMBER_CLK_DIVIDER=18  }
+
+---- Target Options
+Global Maximum Fanout              : 10000
+Add Generic Clock Buffer(BUFG)     : 32
+Register Duplication               : YES
+Optimize Instantiated Primitives   : NO
+Use Clock Enable                   : Auto
+Use Synchronous Set                : Auto
+Use Synchronous Reset              : Auto
+Pack IO Registers into IOBs        : auto
+Equivalent register Removal        : YES
+Add IO Buffers                     : YES
+
+---- General Options
+Library Search Order               : ./system.lso
+Optimization Goal                  : speed
+Optimization Effort                : 2
+Power Reduction                    : NO
+Keep Hierarchy                     : NO
+RTL Output                         : Yes
+Global Optimization                : AllClockNets
+Read Cores                         : YES
+Write Timing Constraints           : NO
+Cross Clock Analysis               : NO
+Hierarchy Separator                : /
+Bus Delimiter                      : <>
+Case Specifier                     : maintain
+Slice Utilization Ratio            : 100
+BRAM Utilization Ratio             : 100
+DSP48 Utilization Ratio            : 100
+Auto BRAM Packing                  : NO
+Slice Utilization Ratio Delta      : 5
+
+=========================================================================
+
+
+=========================================================================
+*                          HDL Parsing                                  *
+=========================================================================
+Analyzing Verilog file "/home/brghena/workspace/amber/trunk/hw/vlog/system/boot_mem32.v" into library work
+Parsing module <boot_mem32>.
+ERROR:HDLCompiler:281 - "/home/brghena/workspace/amber/trunk/hw/vlog/system/boot_mem32.v" Line 136: Cannot open include file "boot-loader_memparams32.v".
+ERROR:HDLCompiler:1791 - "/home/brghena/workspace/amber/trunk/hw/vlog/system/boot_mem32.v" Line 122: Empty parameter assignment not allowed
+ERROR:HDLCompiler:598 - "/home/brghena/workspace/amber/trunk/hw/vlog/system/boot_mem32.v" Line 45: Module <boot_mem32> ignored due to previous errors.
+Verilog file /home/brghena/workspace/amber/trunk/hw/vlog/system/boot_mem32.v ignored due to errors
+--> 
+
+
+Total memory usage is 103116 kilobytes
+
+Number of errors   :    3 (   0 filtered)
+Number of warnings :    0 (   0 filtered)
+Number of infos    :    0 (   0 filtered)
+

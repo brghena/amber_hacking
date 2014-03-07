@@ -1,0 +1,8 @@
+INTSTYLE=xflow
+INFILE=/home/brghena/workspace/amber/trunk/hw/fpga/work0/system.ncd
+OUTFILE=/home/brghena/workspace/amber/trunk/hw/fpga/work0/system.bit
+FAMILY=Spartan6
+PART=xc6slx45t-3fgg484
+WORKINGDIR=/home/brghena/workspace/amber/trunk/hw/fpga/work0
+LICENSE=WebPack
+USER_INFO=210771593_0_0_132
