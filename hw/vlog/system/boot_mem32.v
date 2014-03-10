@@ -129,11 +129,16 @@ assign address     = i_wb_adr[MADDR_WIDTH+1:2];
 `ifdef BOOT_MEM_PARAMS_FILE
     `include `BOOT_MEM_PARAMS_FILE
 `else
-    `ifdef BOOT_LOADER_ETHMAC
-        `include "boot-loader-ethmac_memparams32.v"
+	
+    `ifdef BOOT_LOADER_ECHO
+        `include "boot-loader-echo_memparams32.v"
     `else
-        // default file
-        `include "boot-loader-serial_memparams32.v" //XXX: I removed this `include "boot-loader_memparams32.v"
+        `ifdef BOOT_LOADER_ETHMAC
+            `include "boot-loader-ethmac_memparams32.v"
+        `else
+             // default file (serial)
+            `include "boot-loader-serial_memparams32.v" //XXX: I removed this `include "boot-loader_memparams32.v"
+        `endif
     `endif
 `endif
 

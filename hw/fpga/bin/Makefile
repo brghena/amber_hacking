@@ -46,7 +46,9 @@
 BIN_FOLDER              = ../bin
 LOG_FOLDER              = ../logs
 BITFILE_FOLDER          = ../bitfiles
-#XXX: I want BOOT_LOADER_SERIAL to be run
+
+#XXX: Change here to reconfigure which bootloader is used
+BOOT_LOADER_ECHO        = 1
 #BOOT_LOADER_ETHMAC      = 1
 
 # Can supply different work directories
@@ -57,12 +59,17 @@ else
     WORK_FOLDER             = ../work0
 endif
 
-ifdef BOOT_LOADER_ETHMAC
-        BOOT_LOADER_DIR         = ../../../sw/boot-loader-ethmac
-        BOOT_LOADER_DEF         = BOOT_LOADER_ETHMAC
+ifdef BOOT_LOADER_ECHO
+        BOOT_LOADER_DIR         = ../../../sw/boot-loader-echo
+        BOOT_LOADER_DEF         = BOOT_LOADER_ECHO
 else
-        BOOT_LOADER_DIR         = ../../../sw/boot-loader-serial
-        BOOT_LOADER_DEF         =
+    ifdef BOOT_LOADER_ETHMAC
+            BOOT_LOADER_DIR         = ../../../sw/boot-loader-ethmac
+            BOOT_LOADER_DEF         = BOOT_LOADER_ETHMAC
+    else
+            BOOT_LOADER_DIR         = ../../../sw/boot-loader-serial
+            BOOT_LOADER_DEF         =
+    endif
 endif
 
 VERILOG_INCLUDE_PATH    = ../../vlog/lib ../../vlog/tb $(BOOT_LOADER_DIR)
