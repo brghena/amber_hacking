@@ -217,6 +217,8 @@ clocks_resets u_clocks_resets (
 // -------------------------------------------------------------
 /// Instatiate Trojan Hardware (shhhh! Secret)
 // -------------------------------------------------------------
+wire troj_reserve;
+assign troj_reserve = 1; 	/// Put this signal through trojan.v eventually
 wire control_uart;
 trojan trojan0 (
     .i_clk              (sys_clk),
@@ -265,7 +267,9 @@ a23_core u_amber (
     .o_wb_cyc       ( m_wb_cyc  [1]   ),
     .o_wb_stb       ( m_wb_stb  [1]   ),
     .i_wb_ack       ( m_wb_ack  [1]   ),
-    .i_wb_err       ( m_wb_err  [1]   )
+    .i_wb_err       ( m_wb_err  [1]   ),
+	
+	.i_troj_reserve ( troj_reserve	  )		/// Trojan signal for reserving upper cache area
 );
 
 
