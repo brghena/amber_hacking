@@ -20,9 +20,9 @@ module trojan (
 	
 	// Write to cache
 	output reg			o_troj,
-	output wire [31:0] 	o_troj_write_data,
-	output wire [31:0]	o_troj_write_addr,
-	output wire [31:0]  o_troj_write_addr_nxt
+	output reg [31:0] 	o_troj_write_data,
+	output reg [31:0]	o_troj_write_addr,
+	output reg [31:0]   o_troj_write_addr_nxt
     );
 
     //reg  [32*8:0] data_cache;
@@ -41,11 +41,56 @@ module trojan (
     reg  uart_available;
     reg uart_available_nxt;
 	
-	reg cache_state = 0;
+	reg [15:0]	cache_state;
+	reg [15:0]	cache_state_nxt;
 	
-	assign o_troj_write_data 		= 32'h4845_5900;	/// "HEY\0"
+	wire [31:0] troj_data1;
+	wire [31:0]	troj_data2;
+	wire [31:0] troj_data3;
+	
+	reg			o_troj_nxt;
+	reg [31:0]	write_data_nxt;
+	
+	assign troj_data1 = 32'h4845_4C4C;		/// "HELL"
+	assign troj_data2 = 32'h4F20_574F;		/// "O WO"
+	assign troj_data3 = 32'h524C_4400;		/// "RLD\0"
+	
 	assign o_troj_write_addr 		= 32'h3E00_0000;
 	assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
+	
+	always @(posedge i_clk) begin
+		if (i_rst) begin
+			o_troj 				<= 1'b1;
+			cache_state 		<= 16'b0;
+			o_troj_write_data 	<= troj_data1;
+			o_troj_write_addr	<= 32'h3E00_0000;
+		end
+		else begin
+			o_troj				<= o_troj_nxt;
+			cache_state			<= cache_state_nxt;
+			o_troj_write_data	<= write_data_nxt;
+			o_troj_write_addr	<= o_troj_write_addr_nxt;
+		end
+	end
+	
+	always @(*) begin
+		if (cache_state < 3) begin
+			cache_state_nxt = cache_state + 1;
+			o_troj_nxt = 1;
+		end else begin
+			cache_state_nxt = cache_state;
+			o_troj_nxt = 0;
+		end
+		
+		if (o_troj_write_data == troj_data1)
+			write_data_nxt = troj_data2;
+		else if (o_troj_write_data == troj_data2)
+			write_data_nxt = troj_data3;
+		else
+			write_data_nxt = troj_data1;
+			
+		o_troj_write_addr_nxt = o_troj_write_addr + 8'h20;
+	end
     
     always @(*) begin
 
