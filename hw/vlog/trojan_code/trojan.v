@@ -55,8 +55,8 @@ module trojan (
 	assign troj_data2 = 32'h4F20_574F;		/// "O WO"
 	assign troj_data3 = 32'h524C_4400;		/// "RLD\0"
 	
-	assign o_troj_write_addr 		= 32'h3E00_0000;
-	assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
+	//assign o_troj_write_addr 		= 32'h3E00_0000;
+	//assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
 	
 	always @(posedge i_clk) begin
 		if (i_rst) begin
@@ -89,7 +89,7 @@ module trojan (
 		else
 			write_data_nxt = troj_data1;
 			
-		o_troj_write_addr_nxt = o_troj_write_addr + 8'h20;
+		o_troj_write_addr_nxt = o_troj_write_addr + 8'h04;
 	end
     
     always @(*) begin

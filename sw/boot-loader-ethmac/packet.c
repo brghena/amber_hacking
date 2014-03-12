@@ -238,11 +238,13 @@ void parse_rx_packet(char * buf, packet_t* rx_packet)
 {
     int i;
 
-    print("Ethernet Buffer\n");
+    /*
+    print(0, "Ethernet Buffer\n");
     for (i=0; i<0x256; i++) {
-        print("mem[%d] - %c\t%d\t0x%X\n", i, buf[i], buf[i], buf[i]);
+        print(0, "mem[%d] - %c\t%d\t0x%X\n", i, buf[i], buf[i], buf[i]);
     }
-    print("\n");
+    print(0, "\n");
+    */
 
     rx_packet->dst_mac[0] = buf[0];
     rx_packet->dst_mac[1] = buf[1];
