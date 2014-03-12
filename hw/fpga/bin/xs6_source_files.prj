@@ -37,6 +37,9 @@
 #                                                               //
 # ----------------------------------------------------------------
 
+# Trojan
+verilog work ../../vlog/trojan_code/trojan.v
+
 # System
 verilog work ../../vlog/system/boot_mem32.v
 verilog work ../../vlog/system/boot_mem128.v

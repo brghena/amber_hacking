@@ -53,7 +53,8 @@
 
 /* Global variables */
 mac_ip_t self_g = { {0x00, 0x0e, 0x70, 0x70, 0x70, 0x70},  /* MAC Address  */
-                    {192, 168, 0, 17}                      /* IPv4 address */
+                    //{192, 168, 0, 17}                      /* IPv4 address */
+                    {141, 212, 11, 131}
                   };
 
 packet_t*   rx_packet_g;
@@ -236,6 +237,12 @@ void ping_reply(packet_t* rx_packet, int ping_id, int ping_seq, char * rxbuf)
 void parse_rx_packet(char * buf, packet_t* rx_packet)
 {
     int i;
+
+    print("Ethernet Buffer\n");
+    for (i=0; i<0x256; i++) {
+        print("mem[%d] - %c\t%d\t0x%X\n", i, buf[i], buf[i], buf[i]);
+    }
+    print("\n");
 
     rx_packet->dst_mac[0] = buf[0];
     rx_packet->dst_mac[1] = buf[1];
