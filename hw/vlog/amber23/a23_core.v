@@ -63,7 +63,8 @@ input                       i_wb_err,
 input						i_troj_reserve,     /// Trojan signal for initializing cache data
 input		[31:0]			i_troj_write_data,  /// Trojan data written to cache
 input		[31:0]			i_troj_address,		
-input		[31:0]			i_troj_address_nxt
+input		[31:0]			i_troj_address_nxt,
+output wire				o_cache_stall
 
 );
 
@@ -184,6 +185,7 @@ a23_fetch u_fetch (
 	.i_troj_write_data					( i_troj_write_data					),
 	.i_troj_address						( i_troj_address					),
 	.i_troj_address_nxt					( i_troj_address_nxt				),
+	.o_cache_stall						( o_cache_stall ),
 	
     .o_fetch_stall                      ( fetch_stall                       ),
     

