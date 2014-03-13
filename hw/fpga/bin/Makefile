@@ -46,8 +46,7 @@
 BIN_FOLDER              = ../bin
 LOG_FOLDER              = ../logs
 BITFILE_FOLDER          = ../bitfiles
-#XXX: I want BOOT_LOADER_SERIAL to be run
-#BOOT_LOADER_ETHMAC      = 1
+BOOT_LOADER_ETHMAC      = 1
 
 # Can supply different work directories
 # for multiple runs in parallel

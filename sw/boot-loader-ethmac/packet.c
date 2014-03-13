@@ -53,7 +53,8 @@
 
 /* Global variables */
 mac_ip_t self_g = { {0x00, 0x0e, 0x70, 0x70, 0x70, 0x70},  /* MAC Address  */
-                    {192, 168, 0, 17}                      /* IPv4 address */
+                    //{192, 168, 0, 17}                      /* IPv4 address */
+                    {141, 212, 11, 131}
                   };
 
 packet_t*   rx_packet_g;
