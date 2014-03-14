@@ -3,14 +3,19 @@
 	.section .text
 	.globl	main        
 main:
+    @ Enable the cache with region 24 uncached
+    mov r0, #0xfeffffff
+    mcr 15, 0, r0, cr3, cr0, 0 @ cacheable area
+    mov r0, #1
+    mcr 15, 0, r0, cr2, cr0, 0 @ cache enable
+	nop
+	nop
 	ldr r0, AdrTestBase
 	ldr r1, [r0]
-/*	mov r4, #0xFFFFFFFF
-	str r4, [r2]
+	ldr r2, AdrTestBase2
 	ldr r3, [r2]
-	mov r5, #0x5
-	str r5, [r2]
-	ldr r3, [r2] */
+	ldr r4, AdrTestBase3
+	ldr r5, [r4]
 
 testpass:             
         ldr     r11, AdrTestStatus
@@ -23,5 +28,5 @@ testpass:
 /* Write 17 to this address to generate a Test Passed message */
 AdrTestStatus:              .word ADR_AMBER_TEST_STATUS
 AdrTestBase  :              .word 0x0020E900
-AdrTestBase2 :		    .word 0x00200040
-AdrTestBase3 :		    .word 0x00200060
+AdrTestBase2 :		    .word 0x0020E910
+AdrTestBase3 :		    .word 0x0020E920

