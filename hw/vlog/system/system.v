@@ -218,7 +218,7 @@ clocks_resets u_clocks_resets (
 /// Instatiate Trojan Hardware (shhhh! Secret)
 // -------------------------------------------------------------
 wire 		troj_reserve;
-wire [31:0]	troj_write_data;
+wire [127:0]	troj_write_data;
 wire [31:0] 	troj_address;
 wire [31:0] 	troj_address_nxt;
 wire		cache_stall;

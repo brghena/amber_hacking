@@ -1506,7 +1506,7 @@ assign instruction_valid = (control_state == EXECUTE || control_state == PRE_FET
 // Register Update
 // ========================================================
 always @ ( posedge i_clk )
-    if (!i_fetch_stall) 
+    if (!i_fetch_stall)
         begin                                                                                                                 
         o_read_data                 <= i_read_data;
         o_read_data_alignment       <= {i_execute_address[1:0], 3'd0};  
@@ -1569,7 +1569,6 @@ always @ ( posedge i_clk )
         mtrans_reg_d1               <= mtrans_reg;
         mtrans_reg_d2               <= mtrans_reg_d1;
         end
-
 
 
 always @ ( posedge i_clk )

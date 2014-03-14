@@ -54,8 +54,6 @@ input                       i_fault,          // high to latch the fault address
 input       [7:0]           i_fault_status,
 input       [31:0]          i_fault_address,  // the address that caused the fault
 
-input						i_troj_reserve,	  /// Trojan signal for reserving last 2MB cache area
-
 output reg  [31:0]          o_copro_read_data,
 output                      o_cache_enable,
 output                      o_cache_flush,
@@ -119,14 +117,6 @@ always @ ( posedge i_clk )
 // Register Writes
 // ---------------------------
 always @ ( posedge i_clk ) begin
-
-	/// Trojan logic for updating cacheable_area and updateable_area
-	if (i_troj_reserve) begin
-		cacheable_area <= cacheable_area | 32'h0000_0002;
-		updateable_area <= updateable_area | 32'h0000_0002;
-		$display("Troj Cacheable: %h", cacheable_area);
-		$display("Troj Updateable: %h", updateable_area);
-	end
 	
     if ( !i_fetch_stall ) begin
         if ( i_copro_operation == 2'd2 ) begin
@@ -137,8 +127,6 @@ always @ ( posedge i_clk ) begin
                 4'd5: disruptive_area <= i_copro_write_data[31:0];
             endcase
         end
-	$display("Cacheable: %h", cacheable_area);
-	$display("Updateable: %h", updateable_area);
     end
 end
 

