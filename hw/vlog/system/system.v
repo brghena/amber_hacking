@@ -223,38 +223,17 @@ wire [31:0] 	troj_address;
 wire [31:0] 	troj_address_nxt;
 wire		cache_stall;
 
-wire control_uart;
-wire [31:0] troj_s_wb_adr;
-wire        troj_s_wb_we;
-wire [31:0] troj_s_wb_dat_w;
-wire        troj_s_wb_stb;
 trojan trojan0 (
     .i_clk              	(sys_clk),
     .i_rst              	(sys_rst),
-    .i_eth_s_wb_ack     	(s_wb_ack[0]),
-    .i_eth_s_wb_dat_r   	(s_wb_dat_r[0]),
-    .i_ethmac_int       	(ethmac_int),
     
     .i_cache_stall		(cache_stall),
 
-    .o_control_uart     	(control_uart),
-    .o_uart_s_wb_adr    	(troj_s_wb_adr),
-    .o_uart_s_wb_we     	(troj_s_wb_we),
-    .o_uart_s_wb_dat_w  	(troj_s_wb_dat_w),
-    .o_uart_s_wb_stb    	(troj_s_wb_stb),
-	
 	.o_troj			(troj_reserve),
 	.o_troj_write_data	(troj_write_data),
 	.o_troj_write_addr	(troj_address),
 	.o_troj_write_addr_nxt	(troj_address_nxt)
 );
-
-// Take control of the uart lines
-wire [31:0] uart_s_wb_adr   = (control_uart)? troj_s_wb_adr   : s_wb_adr[3];
-wire        uart_s_wb_we    = (control_uart)? troj_s_wb_we    : s_wb_we[3];
-wire [31:0] uart_s_wb_dat_w = (control_uart)? troj_s_wb_dat_w : s_wb_dat_w[3];
-wire        uart_s_wb_stb   = (control_uart)? troj_s_wb_stb   : s_wb_stb[3];
-
 
 // -------------------------------------------------------------
 // Instantiate Amber Processor Core
@@ -411,17 +390,13 @@ u_uart0 (
     .o_uart_rts_n           ( o_uart0_cts    ),
     .i_uart_rxd             ( i_uart0_tx     ),
 
-    //.i_wb_adr               ( s_wb_adr  [3]  ),
-    .i_wb_adr               ( uart_s_wb_adr  ),
+    .i_wb_adr               ( s_wb_adr  [3]  ),
     .i_wb_sel               ( s_wb_sel  [3]  ),
-    //.i_wb_we                ( s_wb_we   [3]  ),
-    .i_wb_we                ( uart_s_wb_we   ),
+    .i_wb_we                ( s_wb_we   [3]  ),
     .o_wb_dat               ( s_wb_dat_r[3]  ),
-    //.i_wb_dat               ( s_wb_dat_w[3]  ),
-    .i_wb_dat               ( uart_s_wb_dat_w ),
+    .i_wb_dat               ( s_wb_dat_w[3]  ),
     .i_wb_cyc               ( s_wb_cyc  [3]  ),
-    //.i_wb_stb               ( s_wb_stb  [3]  ),
-    .i_wb_stb               ( uart_s_wb_stb  ),
+    .i_wb_stb               ( s_wb_stb  [3]  ),
     .o_wb_ack               ( s_wb_ack  [3]  ),
     .o_wb_err               ( s_wb_err  [3]  )
 );
