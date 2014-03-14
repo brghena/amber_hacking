@@ -45,6 +45,14 @@
 	.section .text
 	.globl	main        
 main:
+        @ Enable the cache with region 24 uncached
+        mov r0, #0xfeffffff
+        mcr 15, 0, r0, cr3, cr0, 0 @ cacheable area
+        mov r0, #1
+        mcr 15, 0, r0, cr2, cr0, 0 @ cache enable
+        nop
+	    nop
+
         ldr     r0, AdrEthMacMemBase
 
 /* Write the Transmit Packet Buffer Descriptor */
@@ -141,8 +149,16 @@ main:
    
         cmp     r1, r2
         blt     4b
-                    
         
+
+        @ Cache stuff
+        ldr r0, AdrTestBase
+        ldr r1, [r0]
+        ldr r2, AdrTestBase2
+        ldr r3, [r2]
+        ldr r4, AdrTestBase3
+        ldr r5, [r4]
+            
         b       testpass        
 
 
@@ -161,6 +177,9 @@ testpass:
 
 /* Write 17 to this address to generate a Test Passed message */
 AdrTestStatus:          .word  ADR_AMBER_TEST_STATUS
+AdrTestBase  :          .word 0x0020E900
+AdrTestBase2 :		    .word 0x0020E904
+AdrTestBase3 :		    .word 0x0020E908
 AdrEthMacModer:         .word  ADR_ETHMAC_MODER
 AdrEthMacMIIModer:      .word  ADR_ETHMAC_MIIMODER  
 AdrEthMacMIICommand:    .word  ADR_ETHMAC_MIICOMMAND
@@ -213,9 +232,9 @@ TxFrame:
 .word  0x45485f54 @ 12 bytes of data
 .word  0x204f4c4c
 .word  0x4c524f57
-.word  0x54532144 @ secret end 0
-.word  0x0000504F @ cruft...
-.word  0x8f020000
+.word  0x00002144
+.word  0x54530000 @ secret end 0
+.word  0x8f02504f @ cruft...
 .word  0x02000000
 .word  0x00003170
 .word  0x00000000

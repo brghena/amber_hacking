@@ -59,7 +59,7 @@ int main ( void ) {
     print_serial("Amber debug port\n\r");
     
     /* display the contents of cache memory to find our trojan message */
-    print_serial((char *)0x0020E900);
+    //print_serial((char *)0x0020E900);
 
     /* initialize the memory allocation system */
     init_malloc();
