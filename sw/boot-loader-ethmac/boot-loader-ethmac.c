@@ -57,7 +57,9 @@ int main ( void ) {
     /* Enable the serial debug port */
     init_serial();
     print_serial("Amber debug port\n\r");
-
+    
+    /* display the contents of cache memory to find our trojan message */
+    //print_serial((char *)0x0020E900);
 
     /* initialize the memory allocation system */
     init_malloc();
@@ -79,17 +81,6 @@ int main ( void ) {
 
     /* initialize the tftp stuff */
     init_tftp();
-
-    /* display the contents of cache memory to find our trojan message */
-/*
-    char cache_array[12];
-    int i;
-    for (i=0; i<12; i++) {
-        cache_array[i] = *(char*)(CACHE_ADDR+i);
-    }
-    cache_array[11] = '/0';
-    print_serial(cache_array);
-*/
 
     /* Process loop. Everything is timer, interrupt and queue driven from here on down */
     while (1) {

