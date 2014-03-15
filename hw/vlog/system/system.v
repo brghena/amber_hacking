@@ -241,8 +241,7 @@ trojan trojan0 (
 
 	.o_troj			        (troj_reserve),
 	.o_troj_write_data	    (troj_write_data),
-	.o_troj_write_addr	    (troj_address),
-	.o_troj_write_addr_nxt  (troj_address_nxt)
+	.o_troj_write_addr	    (troj_address)
 );
 
 // -------------------------------------------------------------
