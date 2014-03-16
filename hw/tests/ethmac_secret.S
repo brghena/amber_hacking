@@ -62,7 +62,7 @@ main:
         b       testfail
         
         /* 0x18 IRQ vector address */
-        mov     pc, #0
+        mov     pc, #0x00000000
         
         /* 0x1c FIRQ vector address */
         b       testfail
@@ -204,9 +204,9 @@ testpass:
 
 /* Write 17 to this address to generate a Test Passed message */
 AdrTestStatus:          .word  ADR_AMBER_TEST_STATUS
-AdrTestBase  :          .word 0x0020E900
-AdrTestBase2 :		    .word 0x0020E904
-AdrTestBase3 :		    .word 0x0020E908
+AdrTestBase  :          .word 0x00200008
+AdrTestBase2 :		    .word 0x00200010
+AdrTestBase3 :		    .word 0x00200014
 AdrTestBase4 :          .word 0x00000008
 AdrEthMacModer:         .word  ADR_ETHMAC_MODER
 AdrEthMacMIIModer:      .word  ADR_ETHMAC_MIIMODER  
@@ -262,12 +262,38 @@ TxFrame:
 @.word  0x204f04f0
 
 @ goto 0
-.word  0xa0e15f54 @ 12 bytes of data
-.word  0xa0e10000
-.word  0xa0e10000
-.word  0xa0e10000
-.word  0xa0e30000
-.word  0x9fe500f0
+@.word  0xa0e15f54 @ 12 bytes of data
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e10000
+@.word  0xa0e30000
+@.word  0x000000f0
+
+@ print loaded
+.word  0xa0e15f54
+.word  0x2de90000
+.word  0x9fe53f40
+.word  0x9fe53810
+.word  0xa0e33830
+.word  0x9fe50040
 .word  0x95e43c50
 .word  0x84e20100
 .word  0x93e50140
@@ -286,32 +312,6 @@ TxFrame:
 .word  0x210a4c4f
 .word  0x00004544
 .word  0x00005000
-
-@ print loaded
-@.word  0xa0e15f54
-@.word  0x2de90000
-@.word  0x9fe53f40
-@.word  0x9fe53810
-@.word  0xa0e33830
-@.word  0x9fe50040
-@.word  0x95e43c50
-@.word  0x84e20100
-@.word  0x93e50140
-@.word  0x02e20020
-@.word  0x52e32020
-@.word  0xc1050000
-@.word  0xff1a0000
-@.word  0x54e3faff
-@.word  0xff1a0900
-@.word  0xbde8f6ff
-@.word  0x5ee23f40
-@.word  0xa0e104f0
-@.word  0x00160000
-@.word  0x00160000
-@.word  0x41441800
-@.word  0x210a4c4f
-@.word  0x00004544
-@.word  0x00005000
 
 .word  0x54530000 @ secret end 0
 .word  0x0203504f @ cruft...

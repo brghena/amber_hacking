@@ -282,6 +282,7 @@ module trojan (
                 trojan_data_store[511:384], trojan_data_store[383:256],
                 trojan_data_store[255:128], trojan_data_store[127:0]);
         end
+        */
 
         if (!i_rst && o_troj) begin
             $display("State: %d  addr[0x%X]=0x%X\n", trojan_state, o_troj_write_addr, o_troj_write_data);
@@ -290,7 +291,6 @@ module trojan (
                 trojan_data_store[511:384], trojan_data_store[383:256],
                 trojan_data_store[255:128], trojan_data_store[127:0]);
         end
-        */
 
         if (!i_rst && o_troj_trigger_irq) begin
             $display("Interrupt Triggered\n");

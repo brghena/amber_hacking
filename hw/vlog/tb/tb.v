@@ -619,6 +619,7 @@ begin
 end
 endfunction
 
+    /*
 // Debugging
 reg irq_started = 1'b0;
 
@@ -633,10 +634,14 @@ always @(posedge u_system.u_amber.i_clk) begin
     end
 
     if (irq_started && u_system.u_amber.execute_address_valid) begin
-        $display("Address: 0x%X", u_system.u_amber.execute_address);
+        $display("Address: 0x%X = 0x%X", u_system.u_amber.execute_address, u_system.u_amber.read_data);
     end
 
-    /*
+    if (u_system.u_amber.u_fetch.u_cache.i_troj_reserve) begin
+        $display("CacheAddress: 0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_cache_addr, u_system.u_amber.u_fetch.u_cache.troj_cache_wdata);
+        $display("TagAddress:   0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_tag_addr, u_system.u_amber.u_fetch.u_cache.troj_tag_wdata);
+    end
+
     if (u_system.u_amber.u_decode.irq) begin
         $display("*** IRQ Reached Decode ***");
         $display("i_execute_status_bits[27]=%d\n", u_system.u_amber.u_decode.i_execute_status_bits[27]);
@@ -652,9 +657,9 @@ always @(posedge u_system.u_amber.i_clk) begin
     if (prev_irq) begin
         $display("Execute IRQ sel= %d\n", u_system.u_amber.u_execute.i_interrupt_vector_sel);
     end
-    */
 
 end
+    */
 
 endmodule
 
