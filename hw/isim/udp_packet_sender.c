@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#define IPADDR  		("141.212.11.114")
 #define MAX_PACKET_SIZE 	1024
 #define MAX_CODE_SIZE 		128
 #define BEGIN_MSG_SIZE 		10
@@ -25,8 +26,8 @@ int get_raw_instrs(int* instrs, char* filename);
 int get_hex_num(char* input);
 
 int main(int argc, char** argv) {
-    	if (argc != 4){
-		perror("Incorrect arguments!");
+    	if (argc != 2){
+		perror("No input mem file!");
 		exit(1);
     	}	
 
@@ -46,8 +47,8 @@ int main(int argc, char** argv) {
     	// destination settings
     	memset(&sockaddr, 0, sizeof(sockaddr));
     	sockaddr.sin_family = AF_INET;
-    	sockaddr.sin_port = htons(atoi(argv[3]));
-    	inet_aton(argv[2], &sockaddr.sin_addr);
+    	sockaddr.sin_port = htons(55056);
+    	inet_aton(IPADDR, &sockaddr.sin_addr);
 
     	// transmit arbitrary bytes
     	if (sendto(sd, buf, buf_size, MSG_NOSIGNAL, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0){
