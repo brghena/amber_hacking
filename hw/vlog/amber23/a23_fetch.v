@@ -64,7 +64,6 @@ input                       i_system_rdy,
 input				i_troj_reserve,		/// Trojan signal to stall fetch
 input		[127:0]		i_troj_write_data,	/// Trojan data written to cache
 input		[31:0]		i_troj_address,		
-input		[31:0]		i_troj_address_nxt,
 output				o_cache_stall,
 
 output                      o_fetch_stall,      // when this is asserted all registers 

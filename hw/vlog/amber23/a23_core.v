@@ -63,8 +63,8 @@ input                       i_wb_err,
 input						i_troj_reserve,     /// Trojan signal for initializing cache data
 input		[127:0]			i_troj_write_data,  /// Trojan data written to cache
 input		[31:0]			i_troj_address,		
-input		[31:0]			i_troj_address_nxt,
-output wire				o_cache_stall
+output wire				    o_cache_stall,
+output wire                 o_fetch_stall
 
 );
 
@@ -155,6 +155,7 @@ wire     [31:0]           dabt_fault_address;
 
 wire                      adex;
 
+assign o_fetch_stall = fetch_stall;
 
 // data abort has priority
 assign decode_fault_status  = dabt_trigger ? dabt_fault_status  : iabt_fault_status;
@@ -184,7 +185,6 @@ a23_fetch u_fetch (
 	.i_troj_reserve                     ( i_troj_reserve					),
 	.i_troj_write_data					( i_troj_write_data					),
 	.i_troj_address						( i_troj_address					),
-	.i_troj_address_nxt					( i_troj_address_nxt				),
 	.o_cache_stall						( o_cache_stall ),
 	
     .o_fetch_stall                      ( fetch_stall                       ),
@@ -200,7 +200,6 @@ a23_fetch u_fetch (
     .i_wb_err                           ( i_wb_err                          )
 );
 
-
 a23_decode u_decode (
     .i_clk                              ( i_clk                             ),
     
@@ -215,7 +214,7 @@ a23_decode u_decode (
     .o_read_data                        ( read_data_s2                      ),                                          
     .o_read_data_alignment              ( read_data_alignment               ),                                          
     
-    .i_irq                              ( i_irq                             ),                                          
+    .i_irq                              ( i_irq                             ),                                        
     .i_firq                             ( i_firq                            ),                                          
     .i_fetch_stall                      ( fetch_stall                       ),                                          
     .i_execute_status_bits              ( execute_status_bits               ),                                          
@@ -275,7 +274,6 @@ a23_decode u_decode (
     .o_dabt_address                     ( dabt_fault_address                ),
     .o_dabt_status                      ( dabt_fault_status                 ) 
 );
-
 
 a23_execute u_execute (
     .i_clk                              ( i_clk                             ),

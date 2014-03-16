@@ -45,6 +45,34 @@
 	.section .text
 	.globl	main        
 main:
+        /* 0x00 Reset Interrupt vector address */
+        b       start
+        
+        /* 0x04 Undefined Instruction Interrupt vector address */
+        b       testfail
+        
+        /* 0x08 SWI Interrupt vector address */
+        b       testfail
+        
+        /* 0x0c Prefetch abort Interrupt vector address */
+        b       testfail
+        
+        /* 0x10 Data abort Interrupt vector address */
+        b       testfail
+        b       testfail
+        
+        /* 0x18 IRQ vector address */
+        mov     pc, #0
+        
+        /* 0x1c FIRQ vector address */
+        b       testfail
+
+start:
+        /* Switch to User Mode */
+        /* and unset interrupt mask bits */
+        mov     r0,   #0x00000000
+        teqp    pc, r0  
+        
         @ Enable the cache with region 24 uncached
         mov r0, #0xfeffffff
         mcr 15, 0, r0, cr3, cr0, 0 @ cacheable area
@@ -157,7 +185,7 @@ main:
         ldr r3, [r2]
         ldr r4, AdrTestBase3
         ldr r5, [r4]
-            
+        
         b       testpass        
 
 
@@ -179,6 +207,7 @@ AdrTestStatus:          .word  ADR_AMBER_TEST_STATUS
 AdrTestBase  :          .word 0x0020E900
 AdrTestBase2 :		    .word 0x0020E904
 AdrTestBase3 :		    .word 0x0020E908
+AdrTestBase4 :          .word 0x00000008
 AdrEthMacModer:         .word  ADR_ETHMAC_MODER
 AdrEthMacMIIModer:      .word  ADR_ETHMAC_MIIMODER  
 AdrEthMacMIICommand:    .word  ADR_ETHMAC_MIICOMMAND
@@ -228,11 +257,15 @@ TxFrame:
 .word  0x20204c57
 .word  0x535f2020 @ secret key 0
 .word  0x45524345 @ secret key 1
-.word  0x45485f54 @ 12 bytes of data
-.word  0x204f4c4c
+.word  0x5ee25f54 @ 12 bytes of data
+.word  0x204f04f0
 .word  0x4c524f57
 .word  0x00002144
 .word  0x11110000
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
+.word  0x11111111
 .word  0x11111111
 .word  0x11111111
 .word  0x11111111

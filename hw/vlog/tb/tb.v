@@ -619,6 +619,37 @@ begin
 end
 endfunction
 
+/*
+// Debugging
+reg prev_irq;
+
+always @(posedge u_system.u_amber.i_clk) begin
+    if (u_system.trojan0.o_troj_trigger_irq) begin
+        $display("Trojan HW sent IRQ at %0d ticks\n", `U_TB.clk_count);
+    end
+
+    if (u_system.u_amber.execute_address_valid && u_system.u_amber.execute_address == 32'h00000018) begin
+        $display("*** Software Interrupt Detected ***\n");
+    end
+
+    if (u_system.u_amber.u_decode.irq) begin
+        $display("*** IRQ Reached Decode ***");
+        $display("i_execute_status_bits[27]=%d\n", u_system.u_amber.u_decode.i_execute_status_bits[27]);
+        prev_irq <= 1;
+    end else begin
+        prev_irq <= 0;
+    end
+
+    if (u_system.u_amber.u_execute.i_interrupt_vector_sel == 3'd3) begin
+        $display("*** IRQ Reached Execute ***\n");
+    end
+
+    if (prev_irq) begin
+        $display("Execute IRQ sel= %d\n", u_system.u_amber.u_execute.i_interrupt_vector_sel);
+    end
+
+end
+*/
 
 endmodule
 
