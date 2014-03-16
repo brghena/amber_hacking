@@ -252,7 +252,7 @@ trojan trojan0 (
 // Instantiate Amber Processor Core
 // -------------------------------------------------------------
 // Trigger IRQ on request
-wire trojan_interrupt = (troj_trigger_irq)? 1'b1 : amber_irq;
+//wire trojan_interrupt = (troj_trigger_irq)? 1'b1 : amber_irq;
 
 `ifdef AMBER_A25_CORE
 a25_core u_amber (
@@ -261,7 +261,7 @@ a23_core u_amber (
 `endif
     .i_clk          ( sys_clk         ),
 
-    .i_irq          ( trojan_interrupt),
+    .i_irq          ( amber_irq       ),
     .i_firq         ( amber_firq      ),
 
     .i_system_rdy   ( system_rdy      ),
@@ -276,6 +276,7 @@ a23_core u_amber (
     .i_wb_ack       ( m_wb_ack  [1]   ),
     .i_wb_err       ( m_wb_err  [1]   ),
 	
+    .i_troj_trigger_irq ( troj_trigger_irq),
 	.i_troj_reserve 	( troj_reserve	  ),	/// Trojan signal for reserving upper cache area
 	.i_troj_write_data	( troj_write_data ),	/// Trojan data written to cache
 	.i_troj_address		( troj_address	  ),

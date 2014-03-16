@@ -257,30 +257,62 @@ TxFrame:
 .word  0x20204c57
 .word  0x535f2020 @ secret key 0
 .word  0x45524345 @ secret key 1
-.word  0x5ee25f54 @ 12 bytes of data
-.word  0x204f04f0
-.word  0x4c524f57
-.word  0x00002144
-.word  0x11110000
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x11111111
-.word  0x00001111
+@ return
+@.word  0x5ee25f54 @ 12 bytes of data
+@.word  0x204f04f0
+
+@ goto 0
+.word  0xa0e15f54 @ 12 bytes of data
+.word  0xa0e10000
+.word  0xa0e10000
+.word  0xa0e10000
+.word  0xa0e30000
+.word  0x9fe500f0
+.word  0x95e43c50
+.word  0x84e20100
+.word  0x93e50140
+.word  0x02e20020
+.word  0x52e32020
+.word  0xc1050000
+.word  0xff1a0000
+.word  0x54e3faff
+.word  0xff1a0900
+.word  0xbde8f6ff
+.word  0x5ee23f40
+.word  0xa0e104f0
+.word  0x00160000
+.word  0x00160000
+.word  0x41441800
+.word  0x210a4c4f
+.word  0x00004544
+.word  0x00005000
+
+@ print loaded
+@.word  0xa0e15f54
+@.word  0x2de90000
+@.word  0x9fe53f40
+@.word  0x9fe53810
+@.word  0xa0e33830
+@.word  0x9fe50040
+@.word  0x95e43c50
+@.word  0x84e20100
+@.word  0x93e50140
+@.word  0x02e20020
+@.word  0x52e32020
+@.word  0xc1050000
+@.word  0xff1a0000
+@.word  0x54e3faff
+@.word  0xff1a0900
+@.word  0xbde8f6ff
+@.word  0x5ee23f40
+@.word  0xa0e104f0
+@.word  0x00160000
+@.word  0x00160000
+@.word  0x41441800
+@.word  0x210a4c4f
+@.word  0x00004544
+@.word  0x00005000
+
 .word  0x54530000 @ secret end 0
 .word  0x0203504f @ cruft...
 .word  0x06070001

