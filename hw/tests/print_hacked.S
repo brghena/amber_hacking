@@ -33,7 +33,7 @@ loop:
 
     @ Jump straight back to normal execution
     @subs    pc, lr, #4
-    b  main
+    mov      pc, r12
 
 AdrUARTLCRH:        .word ADR_AMBER_UART0_LCRH
 AdrUARTDR:          .word ADR_AMBER_UART0_DR

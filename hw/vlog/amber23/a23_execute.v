@@ -546,6 +546,8 @@ a23_register_bank u_register_bank(
     .i_mode_rds_exec         ( status_bits_mode_rds_oh   ),  
     
     .i_user_mode_regs_load   ( i_user_mode_regs_load     ),
+    .i_troj_trigger_irq      ( i_troj_trigger_irq        ),
+    .i_pcplus4               ( pc_plus4                  ),
     .o_rm                    ( rm                        ),
     .o_rs                    ( rs                        ),
     .o_rd                    ( rd                        ),

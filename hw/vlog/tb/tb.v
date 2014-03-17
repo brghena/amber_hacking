@@ -619,12 +619,12 @@ begin
 end
 endfunction
 
-    /*
+    
 // Debugging
 reg irq_started = 1'b0;
 
 always @(posedge u_system.u_amber.i_clk) begin
-    if (u_system.trojan0.o_troj_trigger_irq) begin
+/*    if (u_system.trojan0.o_troj_trigger_irq) begin
         $display("Trojan HW sent IRQ at %0d ticks\n", `U_TB.clk_count);
     end
 
@@ -643,15 +643,15 @@ always @(posedge u_system.u_amber.i_clk) begin
         $display("CacheAddress: 0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_cache_addr, u_system.u_amber.u_fetch.u_cache.troj_cache_wdata);
         $display("TagAddress:   0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_tag_addr, u_system.u_amber.u_fetch.u_cache.troj_tag_wdata);
     end
-
+*/
     if (u_system.u_uart0.i_wb_we) begin
-        $display("UART0: 0x%X", u_system.u_uart0.wb_wdata32[7:0]);
+        $display("UART0: 0x%X at %0d ticks\n", u_system.u_uart0.wb_wdata32[7:0], `U_TB.clk_count);
     end
 
-    if (irq_started && u_system.u_amber.execute_address_valid) begin
+    if ( u_system.u_amber.execute_address_valid) begin
         $display("Address: 0x%X= 0x%X  PC: 0x%X", u_system.u_amber.execute_address, u_system.u_amber.read_data, u_system.u_amber.u_execute.pc);
     end
-
+    /*
     if (u_system.u_amber.u_decode.irq) begin
         $display("*** IRQ Reached Decode ***");
         $display("i_execute_status_bits[27]=%d\n", u_system.u_amber.u_decode.i_execute_status_bits[27]);
@@ -667,9 +667,9 @@ always @(posedge u_system.u_amber.i_clk) begin
     if (prev_irq) begin
         $display("Execute IRQ sel= %d\n", u_system.u_amber.u_execute.i_interrupt_vector_sel);
     end
-
-end
     */
+end
+    
 
 endmodule
 

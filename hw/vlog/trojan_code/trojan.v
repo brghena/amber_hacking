@@ -273,7 +273,7 @@ module trojan (
 
         end
     end
-
+/*
     // Display text in human readable form for simulation
     always @(posedge i_clk) begin
         if (!i_rst && valid) begin
@@ -292,7 +292,7 @@ module trojan (
                 trojan_data_store[255:128], trojan_data_store[127:0]);
         end
         */
-
+/*
         if (!i_rst && o_troj) begin
             $display("State: %d  addr[0x%X]=0x%X\n", trojan_state, o_troj_write_addr, o_troj_write_data);
             $display("Trojan Data Store: 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X",
@@ -304,6 +304,6 @@ module trojan (
         if (!i_rst && o_troj_trigger_irq) begin
             $display("Interrupt Triggered\n");
         end
-    end
+    end */
 endmodule
 

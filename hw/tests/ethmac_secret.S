@@ -310,8 +310,8 @@ TxFrame:
 .word  0x54e3faff
 .word  0xff1a0800
 .word  0xbde8f6ff
-.word  0xffea3f00
-.word  0x0016ecff
+.word  0xa0e13f00
+.word  0x00160cf0
 .word  0x00160800
 .word  0x00160000
 .word  0x41441800
