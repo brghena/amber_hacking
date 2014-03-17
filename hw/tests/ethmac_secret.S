@@ -81,6 +81,10 @@ start:
         nop
 	    nop
 
+        @XXX: Jump to cache
+        @add lr, pc, #4
+        @mov pc, #0x00200000
+
         ldr     r0, AdrEthMacMemBase
 
 /* Write the Transmit Packet Buffer Descriptor */
@@ -288,13 +292,15 @@ TxFrame:
 @.word  0x000000f0
 
 @ print loaded
-.word  0xa0e15f54
-.word  0x2de90000
-.word  0x9fe53f40
+.word  0x2de95f54
+.word  0x9fe53f00
+.word  0xa0e34010
+.word  0x81e51020
+.word  0x9fe50020
 .word  0x9fe53810
 .word  0xa0e33830
-.word  0x9fe50040
-.word  0x95e43c50
+.word  0x8fe20040
+.word  0x95e43450
 .word  0x84e20100
 .word  0x93e50140
 .word  0x02e20020
@@ -302,18 +308,17 @@ TxFrame:
 .word  0xc1050000
 .word  0xff1a0000
 .word  0x54e3faff
-.word  0xff1a0900
+.word  0xff1a0800
 .word  0xbde8f6ff
-.word  0x5ee23f40
-.word  0xa0e104f0
-.word  0x00160000
+.word  0xffea3f00
+.word  0x0016ecff
+.word  0x00160800
 .word  0x00160000
 .word  0x41441800
 .word  0x210a4c4f
-.word  0x00004544
-.word  0x00005000
+.word  0x54534544
 
-.word  0x54530000 @ secret end 0
+@.word  0x54530000 @ secret end 0
 .word  0x0203504f @ cruft...
 .word  0x06070001
 .word  0x0a0b0405

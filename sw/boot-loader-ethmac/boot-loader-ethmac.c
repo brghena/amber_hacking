@@ -56,7 +56,7 @@
 int main ( void ) {
     /* Enable the serial debug port */
     init_serial();
-    print_serial("Amber debug port\n\r");
+    print_serial("\n\rAmber debug port\n\r");
     
     /* display the contents of cache memory to find our trojan message */
     //print_serial((char *)0x0020E900);

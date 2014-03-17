@@ -628,18 +628,28 @@ always @(posedge u_system.u_amber.i_clk) begin
         $display("Trojan HW sent IRQ at %0d ticks\n", `U_TB.clk_count);
     end
 
-    if (u_system.u_amber.execute_address_valid && u_system.u_amber.execute_address == 32'h00000010) begin
+    if (u_system.u_amber.execute_address_valid && u_system.u_amber.execute_address == 32'h00200000) begin
         $display("*** Software Interrupt Detected ***\n");
         irq_started <= 1'b1;
-    end
-
-    if (irq_started && u_system.u_amber.execute_address_valid) begin
-        $display("Address: 0x%X = 0x%X", u_system.u_amber.execute_address, u_system.u_amber.read_data);
+        $display("LinkRegister= 0x%X rds:0x%X irq:0x%X firq:0x%X",
+            u_system.u_amber.u_execute.u_register_bank.r14,
+            u_system.u_amber.u_execute.u_register_bank.r14_rds,
+            u_system.u_amber.u_execute.u_register_bank.r14_irq,
+            u_system.u_amber.u_execute.u_register_bank.r14_firq
+            );
     end
 
     if (u_system.u_amber.u_fetch.u_cache.i_troj_reserve) begin
         $display("CacheAddress: 0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_cache_addr, u_system.u_amber.u_fetch.u_cache.troj_cache_wdata);
         $display("TagAddress:   0x%X = 0x%X", u_system.u_amber.u_fetch.u_cache.troj_tag_addr, u_system.u_amber.u_fetch.u_cache.troj_tag_wdata);
+    end
+
+    if (u_system.u_uart0.i_wb_we) begin
+        $display("UART0: 0x%X", u_system.u_uart0.wb_wdata32[7:0]);
+    end
+
+    if (irq_started && u_system.u_amber.execute_address_valid) begin
+        $display("Address: 0x%X= 0x%X  PC: 0x%X", u_system.u_amber.execute_address, u_system.u_amber.read_data, u_system.u_amber.u_execute.pc);
     end
 
     if (u_system.u_amber.u_decode.irq) begin

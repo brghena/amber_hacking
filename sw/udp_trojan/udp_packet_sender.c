@@ -62,17 +62,18 @@ int parse_mem_file(char* buf, char* filename){
 	int instrs[MAX_CODE_SIZE];
 	int i, n;
 
-	int instr_size = get_raw_instrs(instrs, filename);
+    // Subtract one from number of instructions to remove the 0x00000000 appended to the end
+	int instr_size = get_raw_instrs(instrs, filename) - 1;
 	char* data_packet = (char*)malloc(BEGIN_MSG_SIZE + 4*instr_size + END_MSG_SIZE);
 
 	for (i = 0; i < BEGIN_MSG_SIZE; i++)
 		data_packet[i] = begin_msg[i];
 
 	for (n = 0; n < instr_size; n++){
-		data_packet[i++] = (char)((instrs[n] >> 0) & 0xFF);
-		data_packet[i++] = (char)((instrs[n] >> 8) & 0xFF);
-		data_packet[i++] = (char)((instrs[n] >> 16) & 0xFF);
 		data_packet[i++] = (char)((instrs[n] >> 24) & 0xFF);
+		data_packet[i++] = (char)((instrs[n] >> 16) & 0xFF);
+		data_packet[i++] = (char)((instrs[n] >>  8) & 0xFF);
+		data_packet[i++] = (char)((instrs[n] >>  0) & 0xFF);
 	}
 
 	for (n = 0; n < END_MSG_SIZE; n++)
