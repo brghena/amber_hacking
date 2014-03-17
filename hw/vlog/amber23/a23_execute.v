@@ -330,7 +330,7 @@ assign adex_nxt      = |o_address_nxt[31:26] && !i_data_access_exec;
 // If current instruction does not execute because it does not meet the condition
 // then PC advances to next instruction
 assign pc_nxt = (i_troj_trigger_irq) ? i_troj_jump_addr  :
-		(!execute)       ? pc_plus4              :
+    	        (!execute)       ? pc_plus4              :
                 i_pc_sel == 2'd0 ? pc_plus4              :
                 i_pc_sel == 2'd1 ? alu_out               :
                                    interrupt_vector      ;

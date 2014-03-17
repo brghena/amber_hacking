@@ -643,8 +643,8 @@ always @(posedge u_system.u_amber.i_clk) begin
         $display("UART0: 0x%X", u_system.u_uart0.wb_wdata32[7:0]);
     end
     */
-    /*
 
+    /*
     if (irq_started && u_system.u_amber.execute_address_valid) begin
         $display("Address: 0x%X= 0x%X  PC: 0x%X", u_system.u_amber.execute_address, u_system.u_amber.read_data, u_system.u_amber.u_execute.pc);
     end

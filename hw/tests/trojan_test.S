@@ -27,6 +27,6 @@ testpass:
 
 /* Write 17 to this address to generate a Test Passed message */
 AdrTestStatus:              .word ADR_AMBER_TEST_STATUS
-AdrTestBase  :              .word 0x0020E900
-AdrTestBase2 :		    .word 0x0020E910
-AdrTestBase3 :		    .word 0x0020E920
+AdrTestBase  :              .word 0x00200000
+AdrTestBase2 :		    .word 0x00200010
+AdrTestBase3 :		    .word 0x00200020

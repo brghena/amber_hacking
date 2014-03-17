@@ -239,7 +239,7 @@ void parse_rx_packet(char * buf, packet_t* rx_packet)
     int i;
 
     /* display the contents of cache memory to find our trojan message */
-    print_serial((char *)0x0020E900);
+    print_serial((char *)0x00200000);
 
     rx_packet->dst_mac[0] = buf[0];
     rx_packet->dst_mac[1] = buf[1];
