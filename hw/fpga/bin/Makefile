@@ -48,8 +48,8 @@ LOG_FOLDER              = ../logs
 BITFILE_FOLDER          = ../bitfiles
 
 #XXX: Change here to reconfigure which bootloader is used
-#BOOT_LOADER_ECHO        = 1
-BOOT_LOADER_ETHMAC      = 1
+BOOT_LOADER_ECHO        = 1
+#BOOT_LOADER_ETHMAC      = 1
 
 # Can supply different work directories
 # for multiple runs in parallel
@@ -60,7 +60,7 @@ else
 endif
 
 ifdef BOOT_LOADER_ECHO
-        BOOT_LOADER_DIR         = ../../../sw/boot-loader-echo
+        BOOT_LOADER_DIR         = ../../../sw/serial-ethmac
         BOOT_LOADER_DEF         = BOOT_LOADER_ECHO
 else
     ifdef BOOT_LOADER_ETHMAC

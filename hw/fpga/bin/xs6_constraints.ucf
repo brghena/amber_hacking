@@ -128,6 +128,7 @@ NET  "md_pad_io"                                 IOSTANDARD = LVCMOS25;
 NET  "mdc_pad_o"                                 IOSTANDARD = LVCMOS25;
 NET  "phy_reset_n"                               IOSTANDARD = LVCMOS25;
 NET  "led[*]"                                    IOSTANDARD = LVCMOS25;
+NET  "motor"                                     IOSTANDARD = LVCMOS25;
 
 
 ############################################################################
@@ -144,6 +145,7 @@ NET "led[0]"                                     LOC = D17;
 NET "led[1]"                                     LOC = AB4;
 NET "led[2]"                                     LOC = D21;
 NET "led[3]"                                     LOC = W15;
+NET "motor"                                      LOC = W18;
 
 
 ############################################################################

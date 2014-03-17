@@ -131,7 +131,7 @@ assign address     = i_wb_adr[MADDR_WIDTH+1:2];
 `else
 	
     `ifdef BOOT_LOADER_ECHO
-        `include "boot-loader-echo_memparams32.v"
+        `include "serial-ethmac_memparams32.v"
     `else
         `ifdef BOOT_LOADER_ETHMAC
             `include "boot-loader-ethmac_memparams32.v"

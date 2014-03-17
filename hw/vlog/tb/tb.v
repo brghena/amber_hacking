@@ -177,7 +177,8 @@ system u_system (
     .mdc_pad_o          ( mdc               ),
     
     // LEDs
-    .led                (                   )
+    .led                (                   ),
+    .motor              (                   )
 );
 
 

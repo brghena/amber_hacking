@@ -60,6 +60,7 @@ input                       i_wb_stb,
 output                      o_wb_ack,
 output                      o_wb_err,
 output     [3:0]            o_led,
+output                      o_motor,
 output                      o_phy_rst_n
 
 );
@@ -91,6 +92,7 @@ reg  [31:0]     wb_rdata32          = 'd0;
 wire [31:0]     wb_wdata32;
 
 reg  [3:0]      led_reg             = 'd0;
+reg             motor_reg           = 'd0;
 reg             phy_rst_reg         = 'd0;
 
 
@@ -106,6 +108,7 @@ assign o_wb_ack     = i_wb_stb && ( wb_start_write || wb_start_read_d1 );
 assign o_wb_err     = 1'd0;
 assign o_mem_ctrl   = mem_ctrl_reg;
 assign o_led        = led_reg;
+assign o_motor      = motor_reg;
 assign o_phy_rst_n  = phy_rst_reg;
 
 generate
@@ -167,7 +170,7 @@ always @( posedge i_clk )
             AMBER_TEST_MEM_CTRL:         wb_rdata32 <= {31'd0, mem_ctrl_reg};
             
             AMBER_TEST_CYCLES:           wb_rdata32 <=  cycles_reg;
-            AMBER_TEST_LED:              wb_rdata32 <= {27'd0, led_reg};
+            AMBER_TEST_LED:              wb_rdata32 <= {26'd0, motor_reg, led_reg};
             AMBER_TEST_PHY_RST:          wb_rdata32 <= {31'd0, phy_rst_reg};
             default:                     wb_rdata32 <= 32'haabbccdd;
             
@@ -283,10 +286,12 @@ always @( posedge i_clk )
 // ======================================
 // Test LEDs
 // ======================================
-always @( posedge i_clk )
-    if ( wb_start_write && i_wb_adr[15:0] == AMBER_TEST_LED )
-        led_reg <= wb_wdata32[3:0];     
-
+always @( posedge i_clk ) begin
+    if ( wb_start_write && i_wb_adr[15:0] == AMBER_TEST_LED ) begin
+        led_reg <= wb_wdata32[3:0];
+        motor_reg <= wb_wdata32[4];
+    end
+end
 
 // ======================================
 // PHY Reset Register

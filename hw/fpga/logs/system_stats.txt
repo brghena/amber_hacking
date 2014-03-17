@@ -1,0 +1,10 @@
+Original slices used 4554 (8%)
+Trojan slices used 5583 (10%)
+(270 in Trojan Module)
+
+Original lookup tables used 6940 (25%)
+Trojan lookup tables used 8627 (31%)
+(913 in Trojan Module)
+
+Original minimum period 22.327 ns
+Trojan minimum period 22.369 ns

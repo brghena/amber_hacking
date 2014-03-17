@@ -90,7 +90,8 @@ inout                       md_pad_io,
 output                      mdc_pad_o,
 output                      phy_reset_n,
 
-output  [3:0]               led
+output  [3:0]               led,
+output                      motor
 );
 
 
@@ -482,6 +483,7 @@ u_test_module (
     .o_wb_ack               ( s_wb_ack  [5]  ),
     .o_wb_err               ( s_wb_err  [5]  ),
     .o_led                  ( led            ),
+    .o_motor                ( motor          ),
     .o_phy_rst_n            ( phy_reset_n    )
 );
 

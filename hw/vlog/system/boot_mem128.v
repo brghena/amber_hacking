@@ -133,7 +133,7 @@ assign address     = i_wb_adr[MADDR_WIDTH+3:4];
     `include `BOOT_MEM_PARAMS_FILE
 `else
     `ifdef BOOT_LOADER_ECHO
-        `include "boot-loader-echo_memparams128.v"
+        `include "serial-ethmac_memparams128.v"
     `else
         `ifdef BOOT_LOADER_ETHMAC
             `include "boot-loader-ethmac_memparams128.v"

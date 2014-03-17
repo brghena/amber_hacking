@@ -284,7 +284,6 @@ module trojan (
             );
         end
 
-        /*
         if (!i_rst && trojan_data_valid) begin
             $display("Trojan Data Store: 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X",
                 trojan_data_store[767:640], trojan_data_store[639:512],

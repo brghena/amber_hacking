@@ -32,8 +32,10 @@ loop:
     ldmfd   sp!, {r0-r5}
 
     @ Jump straight back to normal execution
+    b main
     @subs    pc, lr, #4
-    mov      pc, r12
+    @mov      pc, r12
+    @mov pc, #0x00000000
 
 AdrUARTLCRH:        .word ADR_AMBER_UART0_LCRH
 AdrUARTDR:          .word ADR_AMBER_UART0_DR

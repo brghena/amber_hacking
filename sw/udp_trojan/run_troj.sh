@@ -28,6 +28,7 @@ else
 fi
 
 echo "Compiling ${PACKET_SENDER}.c"
+rm -f activate_trojan
 gcc -Wall -o activate_trojan ${PACKET_SENDER}.c
 
 echo "Running packet sending program"
